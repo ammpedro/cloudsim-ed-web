@@ -1,0 +1,76 @@
+{% extends 'base_course.html' %}
+
+
+{% block main_content %}
+<div id="gcb-main">
+  <div class="gcb-article tab-content">
+    <div class="gcb-aside">
+
+      <p>
+        {{course_info.reg_form.header_text | safe}}
+      </p>
+
+      <form action="register" method='post'>
+        <input type="hidden" name="xsrf_token" value="{{ register_xsrf_token|escape }}">
+        <fieldset>
+          <ol>
+            <li>
+              <label class="gcb-reg-form-label" for="form01">
+                {# I18N: Question 1 in the registration form. #}
+                {{ gettext('Full Name (Last name, First Name M.I.)') }}
+              </label>
+              <input
+                name="form01" id="form01" type="text"
+                value="{{ current_name|escape }}" required>
+            </li>
+            {% if course_info.reg_form.additional_registration_fields %}
+              {{course_info.reg_form.additional_registration_fields | safe}}
+            {% else %}
+              <!-- reg_form.additional_registration_fields -->
+            {% endif %}
+            <li>
+              <label class="gcb-reg-form-label" for="form02">
+                {# I18N: Question 2 in the registration form. #}
+                {{ gettext('Gender') }}
+              </label>
+              <input
+                name="form02" id="form02" type="radio"
+                value="male"> Male <br>
+              <input
+                name="form02" id="form02" type="radio"
+                value="female"> Female
+            </li>
+
+            <li>
+              <label class="gcb-reg-form-label" for="form03">
+                {# I18N: Question 3 in the registration form. #}
+                {{ gettext('Country') }}
+              </label>
+              <input
+                name="form03" id="form03" type="text" list="country" required>
+            </li>
+
+            <li>
+              <label class="gcb-reg-form-label" for="form04">
+                {# I18N: Question 4 in the registration form. #}
+                {{ gettext('Age') }}
+              </label>
+              <input
+                name="form04" id="form04" type="number" step="1" value="15">
+            </li>
+          
+          </ol>
+        </fieldset>
+        <br><br>
+        <button class="gcb-button" type="submit">
+          {# I18N: Button at the end of the registration form for a course. #}
+          {{ gettext('Enroll') }}
+        </button>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+{% include 'country.html' %}
+{% endblock %}

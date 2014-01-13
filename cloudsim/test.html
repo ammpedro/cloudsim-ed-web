@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html>
+
+
+<head>
+
+<script language="javascript" type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
+<script language="javascript" type="text/javascript" src="/js/latency_graph.js"></script>
+<script language="javascript" type="text/javascript" src="/js/utils.js"></script>
+<script language="javascript" type="text/javascript" src="/js/machine.js"></script>
+<script language="javascript" type="text/javascript" src="/js/machine_ui_view.js"></script>
+<script language="javascript" type="text/javascript" src="/js/machine_launch.js"></script>
+<script language="javascript" type="text/javascript" src="/js/cloud_credentials.js"></script>
+<script language="javascript" type="text/javascript" src="/js/constellations.js"></script>
+<script language="javascript" type="text/javascript" src="/js/widget.js"></script>
+<script language="javascript" type="text/javascript" src="/js/jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="/js/users_admin.js"></script>
+<script language="javascript" type="text/javascript" src="/js/machine_view.js"></script>
+<script language="javascript" type="text/javascript" src="/js/status_img.js"></script>
+<script language="javascript" type="text/javascript" src="/js/simulator.js"></script>
+<script language="javascript" type="text/javascript" src="/js/latency_widget.js"></script>
+<script language="javascript" type="text/javascript" src="/js/cloudsim.js"></script>
+<script>
+
+
+
+
+function on_load_page()
+{
+    console.log("load_page");
+}
+
+    var const_count = 0;
+    function constellation_add_click(div_name)
+    {
+        const_count += 1;
+        var constellation_name="const_"+const_count;
+        var constellation_div = find_or_create_constellation_div(div_name, constellation_name);
+        
+    }
+    
+    
+    var machine_count = 0;
+    function machine_add_click(div_name)
+    {
+        machine_count +=1;
+        var div = document.getElementById('add_machine');
+        var constellation = div.querySelectorAll("input")[0].value;
+        
+        var machine_name = "mach_" + machine_count;
+        machine_add(div_name, constellation, machine_name);
+        
+    }
+    
+    function constellation_remove_click(div_name)
+    {
+        var div = document.getElementById('add_machine');
+        var const_name = div.querySelectorAll("input")[0].value;
+        constellation_remove(div_name, const_name);
+    }
+    
+    var widget_count = 0;
+    function widgets_add_click(div_name)
+    {
+        widget_count +=1;
+        var div = document.getElementById('add_machine');
+        var const_name = div.querySelectorAll("input")[0].value;
+        var mach_name = div.querySelectorAll("input")[1].value;
+        var widget_type = div.querySelectorAll("input")[2].value;
+        
+        var widget_name = "widget_" + widget_count;
+        
+        // widget_add(div_name, const_name, mach_name, widget_type, widget_name);
+        if(widget_type == "life_cycle")
+        {
+            add_machine_lifecycle_widget(div_name, const_name, mach_name, widget_type, widget_name);
+        }
+        
+        if(widget_type == "machine_state")
+        {
+            add_machine_state_widget(div_name, const_name, mach_name, widget_type, widget_name);
+        }
+        
+        if(widget_type == "hostname")
+        {
+            add_machine_hostname_widget(div_name, const_name, mach_name, widget_type, widget_name);
+        }
+
+        if(widget_type == "glx_state")
+        {
+            add_glx_state_widget(div_name, const_name, mach_name, widget_type, widget_name);
+        }
+                
+        if(widget_type == "sim_state")
+        {
+            add_simulator_state_widget(div_name, const_name, mach_name, widget_type, widget_name);
+        }
+        
+        if(widget_type == "latency")
+        {
+            add_latency_widget(div_name, const_name, mach_name, widget_type, widget_name);
+        }
+    }
+    
+    
+    
+    function enum_const_click(div_name)
+    {
+        var str = "constellations: [";
+        var constellations = get_constellation_names(div_name);
+        for(var i=0; i < constellations.length; i++)
+        {
+            str += constellations[i] + ", ";
+        }
+        str += "]";
+        alert(str);
+    }
+    
+    
+    function enum_mach_click(div_name)
+    {   
+        var div = document.getElementById('add_machine');
+        var constellation = div.querySelectorAll("input")[0].value;
+        
+        var str = "machines in '"+ constellation +"': [";
+        var machines = get_machine_names(div_name, constellation);
+        for(var i=0; i < machines.length; i++)
+        {
+            str += machines[i] + ", ";
+        }
+        str += "]";
+        alert(str);
+        
+        // var inside (arr.indexOf(obj) != -1);
+    }
+    
+    function insert_const_click(div_name)
+    {
+        var div_ui = document.getElementById('add_machine');
+        var constellation = div_ui.querySelectorAll("input")[0].value;
+        var select = div_ui.querySelectorAll("#config_select")[0];
+        
+        var index = select.selectedIndex;
+        var configuration = select.options[index].text;
+        
+        var div = document.getElementById(div_name);
+        var constellation_div =  div.querySelector("#"+constellation);
+        if( constellation_div == null)
+        {
+            create_constellation(div_name, configuration, constellation);
+        }
+        
+        
+    }
+    
+    
+    function insert_mach_click(div_name)
+    {
+        var div = document.getElementById('add_machine');
+        var constellation_name = div.querySelectorAll("input")[0].value;
+        var machine_name = div.querySelectorAll("input")[1].value;
+        
+        var machine_div = find_or_create_machine_div(div_name, constellation_name, machine_name);
+        
+        
+    }    
+    
+</script>
+    
+    
+    
+ </head>
+<body onload = "on_load_page()">
+
+    
+    <button onclick="constellation_add_click('constellations_div');">Add</button><br>
+
+        
+    </select>
+    
+    <div id="add_machine">
+    <select id="config_select">
+        <option value="cloudsim" selected="selected">cloudsim</option>
+         <option value="drc_sim_ami">drc_sim_ami</option>
+        <option value="drc_sim">drc_sim</option>
+        <option value="micro_vpn">micro_vpn</option>
+        <option value="ros_fuerte">ros_fuerte</option>
+        <option value="drc_sim_12">drc_sim_12</option>
+        
+    </select>
+    
+        Constellation<input type="text" name="constellation"/>
+        <button onclick="machine_add_click('constellations_div');">Add machine</button>
+        <button onclick="constellation_remove_click('constellations_div');">Remove constellation</button>
+        machine<input type="text" name="machine"/>
+        widget type<input type="text" name="widget"/>
+        <button onclick="widgets_add_click('constellations_div');">Add widget</button>
+        <button onclick="enum_const_click('constellations_div');">list constellations</button>
+        <button onclick="enum_mach_click('constellations_div');">list machines</button>
+        <button onclick="insert_const_click('constellations_div');">insert constellation</button>
+        <button onclick="insert_mach_click('constellations_div');">insert machine</button>
+    </div>
+    
+    <div id="constellations_div" style="width:98%; margin:1%; float:left; border-radius: 15px; border: 1px solid black;">
+    </div>
+</body>
+
+</html>
