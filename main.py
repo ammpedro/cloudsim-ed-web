@@ -39,10 +39,10 @@ import modules.search.search
 import modules.upload.upload
 
 # cloudsim import
-import modules.cloudsim_launch.cloudsim_launch
+#import modules.cloudsim_launch.cloudsim_launch
 
 # use this flag to control debug only features
-debug = not appengine_config.PRODUCTION_MODE
+debug = not appengine_config.PRODUCTION_MODE 
 
 # init and enable most known modules
 modules.activity_tag.activity_tag.register_module().enable()
@@ -57,11 +57,12 @@ modules.review.review.register_module().enable()
 modules.search.search.register_module().enable()
 modules.upload.upload.register_module().enable()
 
+# cloudsim enable
+#modules.cloudsim_launch.cloudsim_launch.register_module().enable()
+
 # register modules that are not enabled by default.
 modules.oauth2.oauth2.register_module()
 
-# cloudsim enable
-modules.cloudsim_launch.cloudsim_launch.register_module().enable()
 
 # compute all possible routes
 global_routes, namespaced_routes = custom_modules.Registry.get_all_routes()

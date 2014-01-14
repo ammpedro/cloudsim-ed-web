@@ -7,7 +7,7 @@
           {{ gettext('Register') }}
         </a>
       {% else %}
-        <form action='register' method='post'>
+        <form action='LaunchHandler' method='post'>
           <input type="hidden" name="xsrf_token" value="{{ register_xsrf_token|escape }}">
           <input type="hidden" name="name_from_profile">
           <button class="gcb-button gcb-button-large" type="submit">

@@ -1,3 +1,15 @@
+This is a prototype for a robotics education courseware. It runs on 
+the following:
+- Google AppEngine 1.8.8
+- Google CourseBuilder 1.5.1
+- Cloudsim 1.7.3
+- Boto
+- Python-dateutil
+- Softlayer
+- NovaClient
+- Prettytable
+
+#######################################################################
 In July 2012, Google hosted a 2-week online, community-based course
 called Power Searching with Google. The course showcased search
 techniques and how to use them to solve real, everyday problems. We

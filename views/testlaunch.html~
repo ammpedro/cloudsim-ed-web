@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+
+{% block top_content %}
+{% endblock %}
+{% block main_content %}
+{{ content | safe }}
+
+
+<form action="launch" method=post>
+<button class="gcb-button gcb-button-large" type="submit">
+            {# I18N: Test Launch. #}
+            {{ gettext('Launch CloudSim') }}
+</button> 
+</form>
+
+{% endblock %}
+
+</body>
+</html>

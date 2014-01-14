@@ -31,9 +31,9 @@
 
 var activity = [
 
-  '<table border="2"><tr><td><b>Search Tips:</b><p><ul><li>In the previous video, you learned how Google searches the web to find the results of your query. <li>Google looks for the word you typed in, but sometimes also looks for synonyms or related terms. Any words appearing in boldface type in your search results are terms Google associates with your search terms. For example, if you search for [kittens] you might see the word cats in boldface in your results.<li>Ads appear in response to some queries and are always labeled ads. <li>Aside from ads, website owners cannot pay to influence the placement of their website in the search results.</ul><p></tr></td></table><br>',
+  '<table border="2" width =100%><tr><td><b>Note:</b><p><ul><li> To answer the following questions, make sure to go through the simulation task 1-1.</ul><p></tr></td></table><br>',
 
-  'The next several questions explore what elements impact the order in which Google returns your results. Mark whether each statement is true or false, according to Matt Cutts:<p>',
+  '<p>',
 
   { questionType: 'multiple choice group',
     questionsList: [{questionHTML: 'Pages that have the words you type in, or synonyms for those words, are listed higher.',
