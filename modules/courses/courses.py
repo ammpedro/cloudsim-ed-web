@@ -19,7 +19,6 @@ __author__ = 'Pavel Simakov (psimakov@google.com)'
 from controllers import assessments
 from controllers import lessons
 from controllers import utils
-#from controllers import cloudsim_utils
 from models import content
 from models import custom_modules
 from tools import verify
@@ -49,8 +48,8 @@ def register_module():
         ('/student/editstudent', utils.StudentEditStudentHandler),
         ('/student/home', utils.StudentProfileHandler),
         ('/student/unenroll', utils.StudentUnenrollHandler),
-        ('/unit', lessons.UnitHandler)]
-        #('/test', cloudsim_utils.LaunchHandler)]
+        ('/unit', lessons.UnitHandler),
+        ('/cloudsim', utils.CloudsimTestLaunchHandler)]
 
     global custom_module
     custom_module = custom_modules.Module(

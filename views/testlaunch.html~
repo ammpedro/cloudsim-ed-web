@@ -1,21 +1,30 @@
-<!DOCTYPE HTML>
-<html>
-<body>
+{% extends 'base_course.html' %}
+
+{% block subtitle %}
+  {# I18N: Title of the webpage. #}
+  - {{ gettext('Test') }}
+{% endblock subtitle %}
 
 {% block top_content %}
+<div>
+    <div class="gcb-aux">
+        <div class="gcb-cols">
+            <div class="gcb-col-6">
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
+
 {% block main_content %}
-{{ content | safe }}
-
-
-<form action="launch" method=post>
-<button class="gcb-button gcb-button-large" type="submit">
-            {# I18N: Test Launch. #}
-            {{ gettext('Launch CloudSim') }}
-</button> 
-</form>
-
+<div style="margin-top: 20px;" class="gcb-cols">
+    <div class="gcb-col-1">
+    </div>
+    <div class="gcb-col-9">
+        <h1 class="gcb-lesson-title">
+            Test Launch
+        </h1>
+    </div>
+</div>
 {% endblock %}
-
-</body>
-</html>
