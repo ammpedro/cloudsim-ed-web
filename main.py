@@ -39,10 +39,7 @@ import modules.search.search
 import modules.upload.upload
 
 # cloudsim import
-# start/stop machines
-import modules.cloudsim_admin.cloudsim_admin
-# start/stop tasks
-# import modules.
+import modules.cloudsim_dash.cloudsim_dash
 
 # use this flag to control debug only features
 debug = not appengine_config.PRODUCTION_MODE 
@@ -61,7 +58,7 @@ modules.search.search.register_module().enable()
 modules.upload.upload.register_module().enable()
 
 # cloudsim enable
-modules.cloudsim_admin.cloudsim_admin.register_module().enable()
+modules.cloudsim_dash.cloudsim_dash.register_module().enable()
 
 # register modules that are not enabled by default.
 modules.oauth2.oauth2.register_module()

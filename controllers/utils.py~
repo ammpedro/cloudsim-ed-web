@@ -694,15 +694,8 @@ class XsrfTokenManager(object):
             return False
 
 # cloudsim
-class CloudsimLaunchTestHandler(BaseHandler):
+class CloudsimTestLaunchHandler(BaseHandler):
     """Handler for cloudsim launch test page."""
-
     def get(self):
-        """Handles GET requests."""
-        student = self.personalize_page_and_get_enrolled(
-            supports_transient_student=True)
-        if not student:
-            return
-
         self.template_value['navbar'] = {}
-        self.render('testlanch.html')
+        self.render('testlaunch.html')

@@ -694,11 +694,14 @@ class XsrfTokenManager(object):
         except Exception:  # pylint: disable-msg=broad-except
             return False
 
-class LaunchHandler(BaseHandler):
+class CloudsimTestLaunchHandler(BaseHandler):
     """Handler for launch page."""
     def get(self):
         """Handles GET requests."""
         self.render('testlaunch.html')
+    def post(self):
+        """Handles POST requests."""
+        
 
   
 
