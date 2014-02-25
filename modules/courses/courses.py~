@@ -24,7 +24,7 @@ from models import custom_modules
 from tools import verify
 
 
-#custom_module = None
+custom_module = None
 
 
 def register_module():
@@ -48,8 +48,8 @@ def register_module():
         ('/student/editstudent', utils.StudentEditStudentHandler),
         ('/student/home', utils.StudentProfileHandler),
         ('/student/unenroll', utils.StudentUnenrollHandler),
-        ('/unit', lessons.UnitHandler),
-        ('/cloudsim', utils.CloudsimTestLaunchHandler)]
+        ('/unit', lessons.UnitHandler)]
+        #('/cloudsim', cloudsim_dash.CloudsimTestLaunchHandler)]
 
     global custom_module
     custom_module = custom_modules.Module(

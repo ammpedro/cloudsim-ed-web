@@ -693,11 +693,3 @@ class XsrfTokenManager(object):
         except Exception:  # pylint: disable-msg=broad-except
             return False
 
-# cloudsim
-class CloudsimLaunchTestHandler(BaseHandler):
-    """Handler for cloudsim launch test page."""
-
-    def get(self):
-
-        self.template_value['navbar'] = {}
-        self.render('testlanch.html')

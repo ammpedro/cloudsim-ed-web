@@ -2,7 +2,7 @@
 
 {% block subtitle %}
   {# I18N: Title of the webpage. #}
-  - {{ gettext('Test') }}
+  - {{ gettext('CloudSim Test Page') }}
 {% endblock subtitle %}
 
 {% block top_content %}
@@ -18,13 +18,48 @@
 {% endblock %}
 
 {% block main_content %}
+
+<style>
+label { display: inline-block; float: left; clear: left; width: 150px;}
+input { display: inline-block; float: left;}
+</style>
+
 <div style="margin-top: 20px;" class="gcb-cols">
     <div class="gcb-col-1">
     </div>
     <div class="gcb-col-9">
-        <h1 class="gcb-lesson-title">
-            Test Launch
-        </h1>
+
+        <h1>Machine Status</h1>
+        <P><div>
+            <form method = "Post">
+            <label> CloudSim IP:</label> <input name="ip_address" id="ip_address" required type="text" pattern ="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" placeholder="0.0.0.0"></br>
+            <label> Username:</label> <input name="username" id="username" required type="text"></br>
+            <label> Password:</label> <input name="password" id="password" required type="password"></br>
+            <label> Simulator Name:</label> <input name="simulator_name" id="simulator_name" required type="text"></br>
+            <label><button type="submit"> Check Status </button></label></br>
+            </form>
+        </div></p>
+        </br><hr></br>
+
+        <h1>Running Tasks</h1>
+        <p><div></div></p><br><hr><br>
+
+
+
+        <h1>Launch Task</h1>
+        <p><div>
+        <form method = "Post" action = {{ self.CloudsimTestLaunchHandler }}>
+            <p><label> CloudSim IP:</label> <input name="ip_address" id="ip_address" required type="text" pattern ="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" value="0.0.0.0"></p>
+            <p><label> Username:</label> <input name="username" id="username" required type="text" value="test"></p>
+            <p><label> Password:</label> <input name="password" id="password" required type="password" value="test"></p>
+            <p><label> Simulator Name:</label> <input name="simulator_name" id="simulator_name" required type="text" value="test"></p>
+            <p><label> Task Title:</label> <input name="task_title" id="task_title" required type="text" value="New Task"></p>
+            <P><label> ROS Package:</label> <input name="ros_package" id="ros_package" required type="text" value="drcsim_gazebo"></label></p>            
+            <P><label> Launch File:</label> <input name="launch_filename" id="launch_filename" required type="text" value="vrc_task_1.launch.launch"></label></p>
+            <p><label><button type="submit"> Launch Task </button></label></p>
+        </form>
+        </div></p>
+
     </div>
 </div>
 {% endblock %}
