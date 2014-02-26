@@ -21,8 +21,7 @@
   <script src="assets/lib/butterbar.js"></script>
   <link rel="stylesheet" type="text/css" href="assets/css/butterbar.css" media="screen" />
 
-  <link href="assets/css/scroller.css" rel="stylesheet" type="text/css">
-  <script src="assets/js/Slimslider.js"></script>
+  
 {% endblock %}
 
 {% block navbar %}
@@ -46,6 +45,10 @@
             {# I18N: Navbar tab. #}
             <a href="forum">{{ gettext('Forum') }}</a>
           </li>
+        <li {% if navbar.cloudsim %}class='active'{% endif %}>
+          {# I18N: CloudSim tab. #}
+          <a href="cloudlaunch">{{ gettext('CloudSim') }}</a>
+        </li>
         {% endif %}
 
         <!-- right-aligned links are in order -->

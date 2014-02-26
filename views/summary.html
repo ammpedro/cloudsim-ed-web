@@ -1,11 +1,8 @@
-
 {% if video_exists or image_exists %}
   <div class="gcb-col-5">
 {% else %}
   <div class="gcb-col-11">
 {% endif %}
-
-{% include 'img_scroller.html'%}
 
   <h1 class="gcb-product-headers-large">
     {{course_info.course.title}}
@@ -15,6 +12,9 @@
   {{course_info.course.blurb | gcb_tags}}
   </p>
 
+  <p class="gcb-bio-headers">
+    {{course_info.course.instructor_details | safe}}
+  </p>
 
 </div>
 

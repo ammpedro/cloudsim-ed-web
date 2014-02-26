@@ -4,6 +4,7 @@
     <base href="{{ gcb_course_base }}" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
+
     {% block title %}
     {% endblock %}
 
@@ -139,7 +140,7 @@
     <!-- ButterBar -->
     <div class="gcb-butterbar-container">
       <div id="gcb-butterbar-top" class="gcb-butterbar" style='margin-top:50px'>
-        <p id="gcb-butterbar-message"></p>
+        <p id="gcb-butterbar-message">{{ status }}</p>
         <a id="gcb-butterbar-close">X</a>
       </div>
     </div>

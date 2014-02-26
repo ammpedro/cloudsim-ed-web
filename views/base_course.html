@@ -21,7 +21,7 @@
   <script src="assets/lib/butterbar.js"></script>
   <link rel="stylesheet" type="text/css" href="assets/css/butterbar.css" media="screen" />
 
-  <script src="assets/js/slider.js"></script>
+  
 {% endblock %}
 
 {% block navbar %}
@@ -75,6 +75,10 @@
             {# I18N: Navbar tab. #}
             <a href="student/home">{{ gettext('Progress') }}</a>
           </li>
+        <li {% if navbar.cloudsim %}class='active'{% endif %}>
+          {# I18N: Navbar tab. #}
+          <a href="cloudlaunch">{{ gettext('CloudSim') }}</a>
+        </li>
         {% else %}
           <li {% if navbar.registration %}class='active'{% endif %}>
             {# I18N: Navbar tab. #}

@@ -29,13 +29,22 @@ course:
   admin_user_emails: '[cloudsim.ed@gmail.com]'
 
   # Course title
-  title: 'Wheeled Mobile Robots'
+  title: 'An Introduction to Wheeled Mobile Robots'
 
   # Main page blurb. (The '|' at the beginning enables multi-line input.)
-  blurb: |
-    Google Search makes it amazingly easy to find information. Come learn about
-    the powerful advanced tools we provide to help you find just the right
-    information when the stakes are high.
+  blurb:  |
+    <div>This track provides an introduction to mobile robotics through the use of open source 
+    robotics tools such as ROS, Gazebo Simulator and CloudSim. The track is divided into 
+    three major units: <ol><li>Actuation</li> <li>Perception</li> <li>Navigation</li></ol> 
+    These units explore the basics of robot movement, how data can be gathered about the 
+    environment through sensors and finally, how both are combined to provide 
+    simple autonomous navigation. <p/>
+    Using a simulated environment, the student will be able to:
+    <ul><li>Run and complete robot simulation tasks</li> 
+    <li>Interpret DC motor specifications in the design of a wheeled mobile robot platform</li>
+    <li>Use sensor devices to allow the robot to perceive the environment</li>
+    <li>Program simple navigation routines for robot exploration within a static environment</li></ul> 
+    </div>
 
   # Information about the instructor to display on the main page.
   #instructor_details: ' '

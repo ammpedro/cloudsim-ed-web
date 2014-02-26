@@ -37,9 +37,11 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
 
     def get(self):
         """Handles GET requests."""
+        status = ""
+        alert = ""
         self.template_value['navbar'] = {}
-        self.render('testlaunch.html')
-
+        self.template_value['status'] = status
+        self.render('cloudlaunch.html')
 
     def post(self):
         """Handles POST requests."""
@@ -54,7 +56,11 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
                 t = now - dt
                 s = t.isoformat()
                 return s
+        
+        status = "Connect to a Simulator to view tasks"
+        alert = ""
 
+        action = self.request.get("action", '')
 
         ip_address = self.request.get('ip_address')
         username = self.request.get('username')
@@ -64,6 +70,7 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
         task_title = self.request.get('task_title')
         ros_package = self.request.get('ros_package')
         launch_filename = self.request.get('launch_filename')
+        bash_filename = self.request.get('bash_filename')
 
         task_dict = {}
         task_dict['task_title'] = task_title
@@ -75,24 +82,36 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
         task_dict['uplink_data_cap'] = '0'
         task_dict['downlink_data_cap'] = '0'
         task_dict['local_start'] = _get_now_str(-1)
-        task_dict['local_stop'] = _get_now_str(1)  
+        task_dict['local_stop'] = _get_now_str(1)
+        task_dict['bash_src'] =  bash_filename  
         task_dict['vrc_id'] = 1
         task_dict['vrc_num'] = 1
 
-        try:
-            cloudsim_api = CloudSimRestApi(ip_address, username, password)
-            task_id = cloudsim_api.create_task(simulator_name, task_dict)
-            cloudsim_api.start_task(simulator_name, task_id)
-        except:
-            e = sys.exc_info()[0]
-            print(e)
-            self.response.out.write("%s" % e)
-        #self.template_value['navbar'] = {}
-        #self.render('testlaunch.html')
+        if action == "checkstatus":
+            try:
+                cloudsim_api = CloudSimRestApi(ip_address, username, password) 
+                status = str(cloudsim_api.get_tasks(simulator_name))
+            except:
+                e = sys.exc_info()[0]
+                print(e)
+                alert = "An error occured while Connecting; " + str(e)
         
+        elif action == "launchtask":
+            try:
+                cloudsim_api = CloudSimRestApi(ip_address, username, password)
+                task_id = cloudsim_api.create_task(simulator_name, task_dict)
+                cloudsim_api.start_task(simulator_name, task_id)
+            except:
+                e = sys.exc_info()[0]
+                print(e)
+                alert = "An error occured while launching task; " + str(e)
+            
 
-
-
+        self.template_value['navbar'] = {}
+        self.template_value['status'] = status
+        self.template_value['alert'] = alert
+        self.render('cloudlaunch.html')
+        
 
 # Coursebuilder
 def register_module():
@@ -104,7 +123,7 @@ def register_module():
     # register handlers
     # zip_handler = ('/khan-exercises', sites.make_zip_handler(ZIP_FILE))
     # render_handler = ('/khan-exercises/khan-exercises/indirect/', KhanExerciseRenderer)
-    launch_handler = ('/testlaunch', CloudsimTestLaunchHandler)
+    launch_handler = ('/cloudlaunch', CloudsimTestLaunchHandler)
 
     # register module
     global custom_module
