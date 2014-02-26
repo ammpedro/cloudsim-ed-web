@@ -27,15 +27,15 @@
 
 institution:
   # Name of your institution
-  name: 'Open Source Robotics Foundation'
+  name: 'Add Your Institution Here'
 
   # URL of your institution's webpage
-  url: 'http://www.osrfoundation.org'
+  url: 'LINK_TO_YOUR_INSTITUTION_HERE'
 
   # Link and alt text for the logo of the course or your institution
   logo:
-    url: 'assets/img/cloudsim-ed.png'
-    alt_text: logo
+    url: 'assets/img/your_logo_here.png'
+    alt_text: YOUR_LOGO_HERE
 
 
 ####################
@@ -73,7 +73,7 @@ base:
   show_gplus_button: True
 
   # Header phrase for the main navigation bar
-  nav_header: 'Robotics Education on the Cloud'
+  nav_header: 'Search Education'
 
   # Link to your privacy policy and terms of service
   privacy_terms_url: 'PRIVACY_POLICY_AND_TERMS_OF_SERVICE'

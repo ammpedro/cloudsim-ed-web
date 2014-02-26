@@ -67,6 +67,8 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
         password = self.request.get('password')
         simulator_name = self.request.get('simulator_name')
 
+        task_name = self.request.get('task_name')
+
         task_title = self.request.get('task_title')
         ros_package = self.request.get('ros_package')
         launch_filename = self.request.get('launch_filename')
@@ -90,17 +92,31 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
         if action == "checkstatus":
             try:
                 cloudsim_api = CloudSimRestApi(ip_address, username, password) 
-                status = str(cloudsim_api.get_tasks(simulator_name))
+                tasks = cloudsim_api.get_tasks(simulator_name)
+                print(tasks)
+                status = str(tasks)
             except:
                 e = sys.exc_info()[0]
                 print(e)
                 alert = "An error occured while connecting to the simulator; " + str(e)
+
+        elif action == "checktaskstatus":
+            try:
+                cloudsim_api = CloudSimRestApi(ip_address, username, password) 
+                task_stat = cloudsim_api.read_task(simulator_name, task_name)
+                print(tasks)
+                status = str(task_stat)
+            except:
+                e = sys.exc_info()[0]
+                print(e)
+                alert = "An error occured while reading task; " + str(e)
         
         elif action == "launchtask":
             try:
                 cloudsim_api = CloudSimRestApi(ip_address, username, password)
                 task_id = cloudsim_api.create_task(simulator_name, task_dict)
                 cloudsim_api.start_task(simulator_name, task_id)
+                alert = "Task Launched"
             except:
                 e = sys.exc_info()[0]
                 print(e)

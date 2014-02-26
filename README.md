@@ -6,7 +6,7 @@ This is a robotics courseware prototype that runs on the following:
 Additional Files/Folders:
 
 - modules/cloudsim_dash
-- views/testlaunch.html
+- views/cloudlaunch.html
 
 Running Development Server in Linux (assumes Python 2.7 is installed, Tested on Ubuntu 12.04.3):
 

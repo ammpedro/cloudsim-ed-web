@@ -58,20 +58,18 @@ input { display: inline-block; float: left;}
         {{ status }}
         </div></p><br><hr><br>
 
-
-
         <h1>Launch Task</h1>
         <p><div>
         <form method = "Post" action = "/cloudlaunch?action=launchtask">
-            <p><label> CloudSim IP:</label> <input name="ip_address" id="ip_address" required type="text" pattern ="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" value="0.0.0.0"></p>
-            <p><label> Username:</label> <input name="username" id="username" required type="text" value="test"></p>
-            <p><label> Password:</label> <input name="password" id="password" required type="password" value="test"></p>
-            <p><label> Simulator Name:</label> <input name="simulator_name" id="simulator_name" required type="text" value="cx"></p>
-            <p><label> Task Title:</label> <input name="task_title" id="task_title" required type="text" value="New Task"></p>
-            <P><label> ROS Package:</label> <input name="ros_package" id="ros_package" required type="text" value="drcsim_gazebo"></label></p>            
-            <P><label> Launch File:</label> <input name="launch_filename" id="launch_filename" required type="text" value="vrc_task_1.launch"></label></p>
-            <P><label> Bash File:</label> <input name="bash_filename" id="bash_filename" required type="text" value="/home/ubuntu/cloudsim/sim_setup.bash"></label></p>
-            <p><label><button type="submit"> Launch Task </button></label></p>
+            <p><label> CloudSim IP:</label> <input name="ip_address" id="ip_address" required type="text" pattern ="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" value="0.0.0.0"></br>
+            <p><label> Username:</label> <input name="username" id="username" required type="text" value="test"></br>
+            <p><label> Password:</label> <input name="password" id="password" required type="password" value="test"></br>
+            <p><label> Simulator Name:</label> <input name="simulator_name" id="simulator_name" required type="text" value="cx"></br>
+            <p><label> Task Title:</label> <input name="task_title" id="task_title" required type="text" value="New Task"></br>
+            <P><label> ROS Package:</label> <input name="ros_package" id="ros_package" required type="text" value="drcsim_gazebo"></br>      
+            <P><label> Launch File:</label> <input name="launch_filename" id="launch_filename" required type="text" value="vrc_task_1.launch"></br>
+            <P><label> Bash File:</label> <input name="bash_filename" id="bash_filename" required type="text" value="/home/ubuntu/cloudsim/sim_setup.bash"></br>
+            <p><label><button type="submit"> Launch Task </button></label></br>
         </form>
         </div></p>
 

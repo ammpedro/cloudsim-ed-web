@@ -27,10 +27,10 @@
 
 institution:
   # Name of your institution
-  name: ''
+  name: 'Add Your Institution Here'
 
   # URL of your institution's webpage
-  url: ''
+  url: 'LINK_TO_YOUR_INSTITUTION_HERE'
 
   # Link and alt text for the logo of the course or your institution
   logo:

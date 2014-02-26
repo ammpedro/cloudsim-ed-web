@@ -81,6 +81,14 @@ class CloudSimRestApi(object):
         r = '?' + params[1:]
         return r
 
+    def get_machine_configs(self):
+        """
+        Returns the configurations for each provider and region.
+        """
+        r = self._api_get('cloudsim/inside/cgi-bin/machine_configs')
+        return r
+        
+
     def get_constellations(self):
         """
         Returns the list of constellations for this CloudSim
@@ -108,20 +116,28 @@ class CloudSimRestApi(object):
         """
         Returns the data for a specific constellation
         """
-        constellations = self.get_constellations()
-        for c in constellations:
-            if c['constellation_name'] == constellation_name:
-                return c
+        url = 'cloudsim/inside/cgi-bin/constellations'
+        url += '/%s' % constellation_name
+        cs = self._api_get(url)
+        if cs:
+            return cs
         raise Exception('constellation "%s" not found' % constellation_name)
 
-    def launch_constellation(self, provider, configuration):
+
+    def get_tasks(self, constellation_name):
+        constellation = self.get_constellation_data(constellation_name)
+        return constellation['tasks']
+
+    def launch_constellation(self, provider, region, configuration):
         """
         Creates a new constellation with the specified configuration
         """
         p = urllib2.quote(provider)
         c = urllib2.quote(configuration)
+        r = urllib2.quote(region)
         url = '/cloudsim/inside/cgi-bin/constellations'
         url += '?cloud_provider=' + p
+        url += '&region=' + r;
         url += '&configuration=' + c;
         s = self._api_post(url)
         return s
@@ -165,19 +181,58 @@ class CloudSimRestApi(object):
         r = self._api_get(url)
         return r
 
-# 
+#
 #     def update_task(self, task_dict):
 #         pass
 # 
 #     def delete_task(self):
 #         pass
 
+    def start_notebook(self, constellation_name):
+        url = '/cloudsim/inside/cgi-bin/cloudsim_cmd.py'
+        url += '?command=start_cloudsim_notebook';
+        url += '&constellation=' + constellation_name;
+        r = self._api_get(url)
+        return r
+
+    def ping_notebook(self, constellation_name):
+        """
+        Returns the state of the iPython notebook
+        """
+        state = self.get_constellation_data(constellation_name)
+        return state['cloudsim_notebook']
+
+    def stop_notebook(self, constellation_name):
+        url = '/cloudsim/inside/cgi-bin/cloudsim_cmd.py'
+        url += '?command=stop_cloudsim_notebook';
+        url += '&constellation=' + constellation_name;
+        r = self._api_get(url)
+        return r
+
+    def start_gzweb(self, constellation_name):
+        url = '/cloudsim/inside/cgi-bin/cloudsim_cmd.py?command=start_gzweb';
+        url += '&constellation=' + constellation_name;
+        r = self._api_get(url)
+        return r
+
+    def stop_gzweb(self, constellation_name):
+        url = '/cloudsim/inside/cgi-bin/cloudsim_cmd.py?command=stop_gzweb';
+        url += '&constellation=' + constellation_name;
+        r = self._api_get(url)
+        return r
+
+    def ping_gzweb(self, constellation_name):
+        """
+        Returns the state of gzweb
+        """
+        state = self.get_constellation_data(constellation_name)
+        return state['gzweb']
+
     def start_task(self, constellation_name, task_id):
         """
         Start a simulation task
         """
         url = '/cloudsim/inside/cgi-bin/cloudsim_cmd' 
-
         param_dict = {'command' : 'start_task', 
                       'constellation' : constellation_name,
                       'task_id' : task_id}
@@ -226,7 +281,7 @@ def terminate_children(cloudsim, config=None, delay=1):
         time.sleep(delay)
 
 
-def multi_launch(papa, provider, configuration, count, delay=10):
+def multi_launch(papa, provider, region, configuration, count, delay=10):
     """
     Launches multiple constellations of the specified configuration
     inside a the CloudsimRestApi papa. 
@@ -236,11 +291,15 @@ def multi_launch(papa, provider, configuration, count, delay=10):
                                    count, configuration, papa.url, delay))
     for i in range(count):
         print (" launching %s" % i)
-        papa.launch_constellation(provider, configuration)
+        papa.launch_constellation(provider, region, configuration)
         time.sleep(delay)
      
      
-def launch_for_each_cloudsim(cloudsims, provider, configuration, delay=0.1):
+def launch_for_each_cloudsim(cloudsims,
+                             provider,
+                             region,
+                             configuration,
+                             delay=0.1):
     """
     Launches a constellation of specific configuration for each 
     CloudSimRestApi in the cloudsims list.
@@ -251,7 +310,7 @@ def launch_for_each_cloudsim(cloudsims, provider, configuration, delay=0.1):
     for cloudsim in cloudsims:
         try:
             print("Launching from %s" % (cloudsim))
-            cloudsim.launch_constellation(provider, configuration)
+            cloudsim.launch_constellation(provider, region, configuration)
         except Exception, e:
             print("   Error: %s" % e)
         time.sleep(delay)
