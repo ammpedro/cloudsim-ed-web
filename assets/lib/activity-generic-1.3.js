@@ -490,6 +490,11 @@ function renderActivity(contentsLst, domRoot) {
 
 // Takes a special 'assessment' object and renders it as HTML under domRoot
 function renderAssessment(assessment, domRoot) {
+  //cloudsim connections
+  if (assessment.cloudsim){
+    domRoot.append(assessment.cloudsim)
+  }
+
   // first surround everything with a form
   domRoot.html('<form name="assessment"></form>');
   domRoot = domRoot.find('form');

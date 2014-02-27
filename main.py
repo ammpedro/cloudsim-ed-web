@@ -80,7 +80,9 @@ webapp2_i18n_config = {'translations_path': os.path.join(
     appengine_config.BUNDLE_ROOT, 'modules/i18n/resources/locale')}
 
 # init application
+webapp2_extras_sessions_config = {'secret_key': 'this-is-my-super-secret-key'}
+
 app = webapp2.WSGIApplication(
     global_routes + extensions_tag_resource_routes + app_routes,
-    config={'webapp2_extras.i18n': webapp2_i18n_config},
+    config={'webapp2_extras.i18n': webapp2_i18n_config, 'webapp2_extras.sessions': webapp2_extras_sessions_config},
     debug=debug)
