@@ -18,6 +18,7 @@ __author__ = 'Pavel Simakov (psimakov@google.com)'
 
 import os
 import webapp2
+from webapp2_extras import sessions
 
 # The following import is needed in order to add third-party libraries.
 import appengine_config  # pylint: disable-msg=unused-import
@@ -85,4 +86,4 @@ webapp2_extras_sessions_config = {'secret_key': 'this-is-my-super-secret-key'}
 app = webapp2.WSGIApplication(
     global_routes + extensions_tag_resource_routes + app_routes,
     config={'webapp2_extras.i18n': webapp2_i18n_config, 'webapp2_extras.sessions': webapp2_extras_sessions_config},
-    debug=debug)
+    debug=True)

@@ -492,9 +492,15 @@ class RegisterHandler(BaseHandler):
             name = profile.nick_name
         else:
             name = self.request.get('form01')
+            country = self.request.get('form03')
+            age = self.request.get('form04')
+
+            cloudsim_ip = self.request.get('form05')
+            cloudsim_uname = self.request.get('form06')
+            cloudsim_passwd = self.request.get('form07')
 
         Student.add_new_student_for_current_user(
-            name, transforms.dumps(self.request.POST.items()))
+            name, country, age, cloudsim_ip, cloudsim_uname, cloudsim_passwd)
         # Render registration confirmation page
         self.redirect('/course#registration_confirmation')
 
@@ -539,6 +545,11 @@ class StudentProfileHandler(BaseHandler):
             XsrfTokenManager.create_xsrf_token('student-edit'))
         self.template_value['can_edit_name'] = (
             not models.CAN_SHARE_STUDENT_PROFILE.value)
+
+        self.template_value['cloudsim_ip'] = student.cloudsim_ip
+        self.template_value['cloudsim_uname'] = student.cloudsim_uname
+        self.template_value['cloudsim_passwd'] = student.cloudsim_passwd
+
         self.render('student_profile.html')
 
 

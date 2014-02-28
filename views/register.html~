@@ -23,23 +23,6 @@
                 name="form01" id="form01" type="text"
                 value="{{ current_name|escape }}" required>
             </li>
-            {% if course_info.reg_form.additional_registration_fields %}
-              {{course_info.reg_form.additional_registration_fields | safe}}
-            {% else %}
-              <!-- reg_form.additional_registration_fields -->
-            {% endif %}
-            <li>
-              <label class="gcb-reg-form-label" for="form02">
-                {# I18N: Question 2 in the registration form. #}
-                {{ gettext('Gender') }}
-              </label>
-              <input
-                name="form02" id="form02" type="radio"
-                value="male"> Male <br>
-              <input
-                name="form02" id="form02" type="radio"
-                value="female"> Female
-            </li>
 
             <li>
               <label class="gcb-reg-form-label" for="form03">
@@ -57,6 +40,34 @@
               </label>
               <input
                 name="form04" id="form04" type="number" step="1" value="15">
+            </li>
+
+
+            <li>
+              <label class="gcb-reg-form-label" for="form05">
+                {# I18N: Question 4 in the registration form. #}
+                {{ gettext('CloudSim IP Address') }}
+              </label>
+              <input
+                name="form04" id="form05" type="text" value="0.0.0.0">
+            </li>
+
+            <li>
+              <label class="gcb-reg-form-label" for="form06">
+                {# I18N: Question 4 in the registration form. #}
+                {{ gettext('Username') }}
+              </label>
+              <input
+                name="form04" id="form06" type="text" step="1" value="test">
+            </li>
+
+            <li>
+              <label class="gcb-reg-form-label" for="form07">
+                {# I18N: Question 4 in the registration form. #}
+                {{ gettext('Password') }}
+              </label>
+              <input
+                name="form04" id="form07" type="text" step="1" value="password">
             </li>
           
           </ol>

@@ -34,30 +34,11 @@ from models import custom_modules
 
 from cloudsim_rest_api import CloudSimRestApi
 
-from webapp2_extras import sessions
-
-
-class SessionHandler(webapp2.RequestHandler):
-    def dispatch(self):
-        # Get a session store for this request.
-        self.session_store = sessions.get_store(request=self.request)
-
-        try:
-            # Dispatch the request.
-            webapp2.RequestHandler.dispatch(self)
-        finally:
-            # Save all sessions.
-            self.session_store.save_sessions(self.response)
-
-    @webapp2.cached_property
-    def session(self):
-        # Returns a session using the default cookie key.
-        return self.session_store.get_session()
+from session_handler import SessionBaseHandler
 
 
 class CloudsimTestLaunchHandler(utils.BaseHandler):
     """Handler for launch page."""
-
 
     def get(self):
         """Handles GET requests."""
@@ -93,13 +74,6 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
                 password = self.request.get('password')
                 simulator_name = self.request.get('simulator_name')
 
-                print ip_address, username, password
-
-                SessionHandler.session['ip_addr'] = ip_address
-                print ip_address
-                SessionHandler.session['usrname'] = username
-                SessionHandler.session['passwd'] = password
-                SessionHandler.session['sim_name'] = simulator_name
 
                 cloudsim_api = CloudSimRestApi(ip_address, username, password) 
                 tasks = cloudsim_api.get_tasks(simulator_name)
@@ -111,11 +85,7 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
                 alert = "An error occured while connecting to the simulator; " + str(e)
         elif action == "launchtask":
             try:
-                ip_address = SessionHandler.session.get('ip_addr')
-                username = SessionHandler.session.get('usrname')
-                password = SessionHandler.session.get('passwd')
-                simulator_name = SessionHandler.session.get('sim_name')
-
+               
                 task_name = self.request.get('task_name')
 
                 task_title = self.request.get('task_title')
