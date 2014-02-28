@@ -300,7 +300,8 @@ class StudentProfileDAO(object):
 
     @classmethod
     def _update_course_profile_attributes(
-        cls, student, nick_name=None, is_enrolled=None):
+        cls, student, nick_name=None, is_enrolled=None, cloudsim_ip=None, 
+        cloudsim_uname=None, cloudsim_passwd=None):
         """Modifies various attributes of Student's Course Profile."""
 
         if nick_name is not None:
@@ -309,12 +310,21 @@ class StudentProfileDAO(object):
         if is_enrolled is not None:
             student.is_enrolled = is_enrolled
 
+        if cloudsim_ip is not None:
+            student.cloudsim_ip = cloudsim_ip
+
+        if cloudsim_uname is not None:
+            student.cloudsim_uname = cloudsim_uname
+
+        if cloudsim_passwd is not None:
+            student.cloudsim_passwd= cloudsim_passwd
+
     @classmethod
     def _update_attributes(
         cls, profile, student,
         email=None, legal_name=None, nick_name=None,
         date_of_birth=None, is_enrolled=None, final_grade=None,
-        course_info=None):
+        course_info=None, cloudsim_ip=None, cloudsim_uname=None, cloudsim_passwd=None):
         """Modifies various attributes of Student and Profile."""
 
         if profile:
@@ -322,11 +332,12 @@ class StudentProfileDAO(object):
                 profile, email=email, legal_name=legal_name,
                 nick_name=nick_name, date_of_birth=date_of_birth,
                 is_enrolled=is_enrolled, final_grade=final_grade,
-                course_info=course_info)
+                course_info=course_info,)
 
         if student:
             cls._update_course_profile_attributes(
-                student, nick_name=nick_name, is_enrolled=is_enrolled)
+                student, nick_name=nick_name, is_enrolled=is_enrolled,cloudsim_ip=cloudsim_ip,
+            cloudsim_uname=cloudsim_uname, cloudsim_passwd=cloudsim_passwd)
 
     @classmethod
     def _put_profile(cls, profile):
@@ -428,6 +439,35 @@ class StudentProfileDAO(object):
             nick_name=nick_name, date_of_birth=date_of_birth,
             is_enrolled=is_enrolled, final_grade=final_grade,
             course_info=course_info)
+
+        cls._put_profile(profile)
+        if not profile_only:
+            student.put()
+
+    @classmethod
+    @db.transactional(xg=True)
+    def update_cloudsim(
+        cls, user_id, email, legal_name=None, nick_name=None,
+        date_of_birth=None, is_enrolled=None, final_grade=None,
+        course_info=None, profile_only=False, cloudsim_ip=None,
+        cloudsim_uname=None, cloudsim_passwd=None):
+        """Updates a student and/or their global profile."""
+        student = None
+        if not profile_only:
+            student = Student.get_by_email(email)
+            if not student:
+                raise Exception('Unable to find student for: %s' % user_id)
+
+        profile = cls._get_profile_by_user_id(user_id)
+        if not profile:
+            profile = cls.add_new_profile(user_id, email)
+
+        cls._update_attributes(
+            profile, student, email=email, legal_name=legal_name,
+            nick_name=nick_name, date_of_birth=date_of_birth,
+            is_enrolled=is_enrolled, final_grade=final_grade,
+            course_info=course_info, cloudsim_ip=cloudsim_ip,
+            cloudsim_uname=cloudsim_uname, cloudsim_passwd=cloudsim_passwd)
 
         cls._put_profile(profile)
         if not profile_only:
@@ -543,6 +583,14 @@ class Student(BaseEntity):
         _, student = cls._get_user_and_student()
         StudentProfileDAO.update(
             student.user_id, student.email, nick_name=new_name)
+
+    @classmethod
+    def edit_cloudsim_credentials(cls, new_ip, new_uname, new_pw):
+        """Gives student new cloudsim credentials."""
+        _, student = cls._get_user_and_student()
+        StudentProfileDAO.update_cloudsim( 
+            student.user_id, student.email,
+            cloudsim_ip=new_ip, cloudsim_uname=new_uname, cloudsim_passwd=new_pw)
 
     @classmethod
     def set_enrollment_status_for_current(cls, is_enrolled):

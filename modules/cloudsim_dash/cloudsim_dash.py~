@@ -32,10 +32,37 @@ from controllers import utils
 from controllers import cloudsim_utils
 from models import custom_modules
 
+from models import models
+from models import transforms
+from models.config import ConfigProperty
+from models.config import ConfigPropertyEntity
+from models.courses import Course
+from models.models import Student
+from models.models import StudentProfileDAO
+from models.models import TransientStudent
+from models.roles import Roles
+
+
 from cloudsim_rest_api import CloudSimRestApi
 
-from session_handler import SessionBaseHandler
+class CloudsimCredentialsEditHandler(utils.BaseHandler):
+    """Handles edits to student records by students."""
 
+    def post(self):
+        """Handles POST requests."""
+        student = self.personalize_page_and_get_enrolled()
+        if not student:
+            print "not student"
+            return
+
+        if not self.assert_xsrf_token_or_fail(self.request, 'student-edit'):
+            print "token fail"            
+            return
+
+        Student.edit_cloudsim_credentials(self.request.get('cloudsim_ip'), 
+                            self.request.get('cloudsim_uname'), self.request.get('cloudsim_passwd'))
+        
+        self.redirect('/student/home')
 
 class CloudsimTestLaunchHandler(utils.BaseHandler):
     """Handler for launch page."""
@@ -44,6 +71,21 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
         """Handles GET requests."""
         status = ""
         alert = ""
+
+        student = self.personalize_page_and_get_enrolled()
+        if not student:
+            return
+
+        course = self.get_course()
+        name = student.name
+        profile = student.profile
+        if profile:
+            name = profile.nick_name
+
+        self.template_value['cloudsim_ip'] = student.cloudsim_ip
+        self.template_value['cloudsim_uname'] = student.cloudsim_uname
+        self.template_value['cloudsim_passwd'] = student.cloudsim_passwd
+
         self.template_value['navbar'] = {}
         self.template_value['status'] = status
         self.render('cloudlaunch.html')
@@ -74,7 +116,6 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
                 password = self.request.get('password')
                 simulator_name = self.request.get('simulator_name')
 
-
                 cloudsim_api = CloudSimRestApi(ip_address, username, password) 
                 tasks = cloudsim_api.get_tasks(simulator_name)
                 status = str(tasks)
@@ -83,8 +124,19 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
                 e = sys.exc_info()[0]
                 print(e)
                 alert = "An error occured while connecting to the simulator; " + str(e)
+
         elif action == "launchtask":
             try:
+
+                student = self.personalize_page_and_get_enrolled()
+                if not student:
+                    return
+
+                course = self.get_course()
+                name = student.name
+                profile = student.profile
+                if profile:
+                    name = profile.nick_name
                
                 task_name = self.request.get('task_name')
 
@@ -108,7 +160,7 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
                 task_dict['vrc_id'] = 1
                 task_dict['vrc_num'] = 1
 
-                cloudsim_api = CloudSimRestApi(ip_address, username, password)
+                cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd)
                 task_id = cloudsim_api.create_task(simulation_name, task_dict)
                 tasks = cloudsim_api.get_tasks(simulation_name)
                 status = str(tasks)
@@ -143,7 +195,7 @@ def register_module():
 
     # register handlers
     # zip_handler = ('/khan-exercises', sites.make_zip_handler(ZIP_FILE))
-    # render_handler = ('/khan-exercises/khan-exercises/indirect/', KhanExerciseRenderer)
+    credentials_handler = ('/cloudlaunch/edit', CloudsimCredentialsEditHandler)
     launch_handler = ('/cloudlaunch', CloudsimTestLaunchHandler)
 
     # register module
@@ -152,5 +204,6 @@ def register_module():
         'Cloudsim Test',
         'A set of pages for starting/stopping Cloudsim machines via '
         'Course Builder.',
-        [], [launch_handler])
+        [], [launch_handler, credentials_handler])
     return custom_module        
+

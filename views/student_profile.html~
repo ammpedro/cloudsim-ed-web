@@ -49,10 +49,10 @@
             </label></h2>
             <fieldset style="border: none;">
               <p>
-                <label> IP Address </label> &nbsp;&nbsp; <input name="cloudsim_ip" id="cloudsim_ip" type="text"> &nbsp;&nbsp;
+                <label> IP Address </label> <input name="cloudsim_ip" id="cloudsim_ip" type="text"> </br>
                 <input type="hidden" name="email" value="{{ student.key().name() }}">
-                <label> Username </label> &nbsp;&nbsp;<input name="cloudsim_uname" id="cloudsim_uname" type="text"> &nbsp;&nbsp;
-                <label> Password </label>&nbsp;&nbsp; <input name="cloudsim_passwd" id="cloudsim_passwd" type="text">
+                <label> Username </label> <input name="cloudsim_uname" id="cloudsim_uname" type="text"> </br>
+                <label> Password </label> <input name="cloudsim_passwd" id="cloudsim_passwd" type="text"> </br>
             </p>
             </fieldset>
             <p>
