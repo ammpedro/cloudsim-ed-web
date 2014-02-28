@@ -69,14 +69,14 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
 
     def get(self):
         """Handles GET requests."""
-        status = ""
+        status = "Connect to a simulator to view available tasks"
         alert = ""
+        task_list = ""
 
         student = self.personalize_page_and_get_enrolled()
         if not student:
             return
 
-        course = self.get_course()
         name = student.name
         profile = student.profile
         if profile:
@@ -85,6 +85,8 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
         self.template_value['cloudsim_ip'] = student.cloudsim_ip
         self.template_value['cloudsim_uname'] = student.cloudsim_uname
         self.template_value['cloudsim_passwd'] = student.cloudsim_passwd
+
+        print student.cloudsim_passwd
 
         self.template_value['navbar'] = {}
         self.template_value['status'] = status
@@ -106,28 +108,34 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
         
         status = "Connect to a Simulator to view tasks"
         alert = ""
+        task_list = ""
+
+        student = self.personalize_page_and_get_enrolled()
+        if not student:
+            return
+
+        name = student.name
+        profile = student.profile
+        if profile:
+            name = profile.nick_name
 
         action = self.request.get("action", '')
  
         if action == "checkstatus":
             try:
-                ip_address = self.request.get('ip_address')
-                username = self.request.get('username')
-                password = self.request.get('password')
                 simulator_name = self.request.get('simulator_name')
-
-                cloudsim_api = CloudSimRestApi(ip_address, username, password) 
-                tasks = cloudsim_api.get_tasks(simulator_name)
-                status = str(tasks)
+                print student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd
+                cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd) 
+                task_list = cloudsim_api.get_tasks(simulator_name)
+                status = ""
 
             except:
                 e = sys.exc_info()[0]
                 print(e)
                 alert = "An error occured while connecting to the simulator; " + str(e)
 
-        elif action == "launchtask":
+        elif action == "createtask":
             try:
-
                 student = self.personalize_page_and_get_enrolled()
                 if not student:
                     return
@@ -138,6 +146,7 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
                 if profile:
                     name = profile.nick_name
                
+                simulator_name = self.request.get('simulator_name')
                 task_name = self.request.get('task_name')
 
                 task_title = self.request.get('task_title')
@@ -161,28 +170,26 @@ class CloudsimTestLaunchHandler(utils.BaseHandler):
                 task_dict['vrc_num'] = 1
 
                 cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd)
-                task_id = cloudsim_api.create_task(simulation_name, task_dict)
-                tasks = cloudsim_api.get_tasks(simulation_name)
-                status = str(tasks)
+                task_id = cloudsim_api.create_task(simulator_name, task_dict)
+                task_list = cloudsim_api.get_tasks(simulator_name)
+                status = ""
                 #cloudsim_api.start_task(session.sim_name, task_id)
                 alert = "Task Created"
             except:
                 e = sys.exc_info()[0]
                 print(e)
                 alert = "An error occured while launching task; " + str(e)
-        elif action == "disconnect":
-                # kill all
-                try:
-                    session.key.delete()
-                    alert = "Disconnected"
-                    status = "Connect to a Simulator to view tasks"
-                except:
-                    alert = "Trouble Disconnecting"
-            
+
 
         self.template_value['navbar'] = {}
         self.template_value['status'] = status
         self.template_value['alert'] = alert
+        self.template_value['task_list'] = task_list
+
+        self.template_value['cloudsim_ip'] = student.cloudsim_ip
+        self.template_value['cloudsim_uname'] = student.cloudsim_uname
+        self.template_value['cloudsim_passwd'] = student.cloudsim_passwd
+
         self.render('cloudlaunch.html')
         
 

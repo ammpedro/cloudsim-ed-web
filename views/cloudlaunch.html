@@ -32,6 +32,8 @@
 <style>
 label { display: inline-block; float: left; clear: left; width: 150px;}
 input { display: inline-block; float: left;}
+th {text-align: left; width: 150px;}
+tr {text-align: left;}
 </style>
 
 
@@ -43,10 +45,27 @@ input { display: inline-block; float: left;}
 
         <h1>Available Tasks</h1>
         <p><div>
-        {{ status }}
+        {{ status }} <br/>
+        {% if task_list %} 
+            <table width = 100%>
+            {% for task in task_list %}
+            <tr style="background-color:#D3D3D3">
+            <th> Task Title </th> <td>{{ task['task_title'] }}</td></tr>
+            <th> Task ID </th> <td> {{ task['task_id'] }} </td></tr>
+            <th> Task State </th> <td> {{ task['task_state'] }} </td></tr>
+            <tr><th colspan=2> Message </th></tr>
+            <tr><td colspan=2> {{ task['task_message'] }} </td>
+            {% endfor %}
+            </table>
+
+        {% else %}
+            No tasks here.
+
+        {% endif %}
+        
         </div></p><br><hr><br>
 
-        <h1>Connect to Simulation Constellation</h1>
+        <h1>Connect to Simulator Constellation</h1>
         <P><div>
             <form method = "Post" action = "/cloudlaunch?action=checkstatus">
             <label> CloudSim IP:</label> <input name="ip_address" id="ip_address" disabled type="text" pattern ="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" value= {{ cloudsim_ip }}></br>
@@ -58,9 +77,9 @@ input { display: inline-block; float: left;}
         </div></p>
         </br><hr></br>
 
-        <h1>Create Task</h1>
+        <h1>Create a Task</h1>
         <p><div>
-        <form method = "Post" action = "/cloudlaunch?action=launchtask">
+        <form method = "Post" action = "/cloudlaunch?action=createtask">
             <!-- <p><label> CloudSim IP:</label> <input name="ip_address" id="ip_address" required type="text" pattern ="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" value="0.0.0.0"></br>
             <p><label> Username:</label> <input name="username" id="username" required type="text" value="test"></br>
             <p><label> Password:</label> <input name="password" id="password" required type="password" value="test"></br>
