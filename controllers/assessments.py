@@ -92,7 +92,7 @@ class AnswerHandler(BaseHandler):
         store_score(course, student, assessment_type, score)
 
         student.put()
-        answers.put()
+        answers.put()   
 
         # Also record the event, which is useful for tracking multiple
         # submissions and history.

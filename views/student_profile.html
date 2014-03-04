@@ -49,11 +49,19 @@
             </label></h2>
             <fieldset style="border: none;">
               <p>
-                <label> IP Address </label> &nbsp;&nbsp; <input name="cloudsim_ip" id="cloudsim_ip" type="text"> &nbsp;&nbsp;
-                <input type="hidden" name="email" value="{{ student.key().name() }}">
-                <label> Username </label> &nbsp;&nbsp;<input name="cloudsim_uname" id="cloudsim_uname" type="text"> &nbsp;&nbsp;
-                <label> Password </label>&nbsp;&nbsp; <input name="cloudsim_passwd" id="cloudsim_passwd" type="text">
-            </p>
+                <table><tr>
+                <td style= "border: none"><label> IP Address </label></td>
+                <td style= "border: none"><label> Username </label></td>
+                <td style= "border: none"><label> Password </label></td>
+                <td style= "border: none"><label> Simulator Name </label></td>
+                </tr><tr>
+                <td style= "border: none"><input name="cloudsim_ip" id="cloudsim_ip" type="text" value={{ cloudsim_ip }}>
+                <input type="hidden" name="email" value="{{ student.key().name() }}"></td>
+                <td style= "border: none"><input name="cloudsim_uname" id="cloudsim_uname" type="text" value={{ cloudsim_uname }}></td>
+                <td style= "border: none"><input name="cloudsim_passwd" id="cloudsim_passwd" type="text" value={{ cloudsim_passwd }}></td>
+                <td style= "border: none"><input name="cloudsim_simname" id="cloudsim_simanme" type="text" value={{ cloudsim_simname }}></td>
+                </tr></table>
+                </p>
             </fieldset>
             <p>
               <button class="gcb-button" type="submit">

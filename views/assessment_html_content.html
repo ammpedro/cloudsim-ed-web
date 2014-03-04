@@ -1,7 +1,7 @@
 {%
   macro render(
       unit_id, xsrf_token, saved_answers, content, readonly=False,
-      check_answers=False, is_review_form=False, review_key=None)
+      check_answers=False, is_review_form=False, review_key=None,)
 %}
   <script>
     var questionData = questionData || {};
@@ -38,12 +38,14 @@
           </button>
         </div>
       {% endif %}
+      {if exam_assessment %}
       <div class="qt-grade-report qt-hidden"></div>
       <div class="qt-grade-assessment qt-hidden">
         <button class="gcb-button qt-check-answer-button">
           {{ gettext(' Submit Answers ') }}
         </button>
       </div>
+      {% endif %}
     {% endif %}
   {% endif %}
 {% endmacro %}

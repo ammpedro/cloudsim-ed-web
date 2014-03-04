@@ -49,7 +49,7 @@
                 {{ gettext('CloudSim IP Address') }}
               </label>
               <input
-                name="form04" id="form05" type="text" value="0.0.0.0">
+                name="form05" id="form05" type="text" value="0.0.0.0">
             </li>
 
             <li>
@@ -58,7 +58,7 @@
                 {{ gettext('Username') }}
               </label>
               <input
-                name="form04" id="form06" type="text" step="1" value="test">
+                name="form06" id="form06" type="text" step="1" value="test">
             </li>
 
             <li>
@@ -67,7 +67,7 @@
                 {{ gettext('Password') }}
               </label>
               <input
-                name="form04" id="form07" type="text" step="1" value="password">
+                name="form07" id="form07" type="text" step="1" value="password">
             </li>
           
           </ol>

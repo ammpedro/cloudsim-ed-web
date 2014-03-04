@@ -71,7 +71,7 @@ tr {text-align: left;}
             <label> CloudSim IP:</label> <input name="ip_address" id="ip_address" disabled type="text" pattern ="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" value= {{ cloudsim_ip }}></br>
             <label> Username:</label> <input name="username" id="username" disabled type="text" value = {{ cloudsim_uname }}></br>
             <label> Password:</label> <input name="password" id="password" disabled type="password" value = {{ cloudsim_passwd }}></br>
-            <label> Simulator Name:</label> <input name="simulator_name" id="simulator_name" required type="text"></br>
+            <label> Simulator Name:</label> <input name="simulator_name" id="simulator_name" disabled value = {{ cloudsim_simname }}></br>
             <label><button class="gcb-button" type="submit"> Check Status </button></label></br>
             </form>
         </div></p>
@@ -84,7 +84,7 @@ tr {text-align: left;}
             <p><label> Username:</label> <input name="username" id="username" required type="text" value="test"></br>
             <p><label> Password:</label> <input name="password" id="password" required type="password" value="test"></br>
             -->
-            <p><label> Simulator Name:</label> <input name="simulator_name" id="simulator_name" required type="text" value="cx"></br>
+            <p><label> Simulator Name:</label> <input name="simulator_name" id="simulator_name" disabled type="text" value={{ cloudsim_simname }}></br>
             <p><label> Task Title:</label> <input name="task_title" id="task_title" required type="text" value="New Task"></br>
             <P><label> ROS Package:</label> <input name="ros_package" id="ros_package" required type="text" value="drcsim_gazebo"></br>      
             <P><label> Launch File:</label> <input name="launch_filename" id="launch_filename" required type="text" value="vrc_task_1.launch"></br>

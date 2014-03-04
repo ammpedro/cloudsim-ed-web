@@ -490,10 +490,6 @@ function renderActivity(contentsLst, domRoot) {
 
 // Takes a special 'assessment' object and renders it as HTML under domRoot
 function renderAssessment(assessment, domRoot) {
-  //cloudsim connections
-  if (assessment.cloudsim){
-    domRoot.append(assessment.cloudsim)
-  }
 
   // first surround everything with a form
   domRoot.html('<form name="assessment"></form>');
@@ -597,9 +593,11 @@ function renderAssessment(assessment, domRoot) {
       buttonText = trans.SUBMIT_ASSIGNMENT_TEXT;
     }
     var disabledHtml = transientStudent ? ' disabled="true" ' : '';
-    domRoot.append(
-        '<br><button type="button" class="gcb-button" id="submitAnswersBtn" ' +
-        disabledHtml + '>' + buttonText + '</button>');
+    if (assessment.exam_assessment) {
+        domRoot.append(
+            '<br><button type="button" class="gcb-button" id="submitAnswersBtn" ' +
+            disabledHtml + '>' + buttonText + '</button>');
+    }
   }
 
   function checkOrSubmitAnswers(submitAnswers) {

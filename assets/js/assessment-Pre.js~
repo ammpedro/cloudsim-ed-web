@@ -47,6 +47,10 @@ var assessment = {
      choices: ["True", correct("False"), "I don't know"]
     },
 
+    {questionHTML: 'A camera is considered a type of sensor.',
+     choices: [correct("True"), "False", "I don't know"]
+    }
+
 
     //{questionHTML: 'What would you type into the search box to get a top result that looks like this? If you do not know, enter "I don\'t know".<p><p><img src="assets/img/Image0.9.png" alt="search results for test question" height=100 width=300 title="search results for test question">',
     // correctAnswerRegex: /354\s*[+]\s*651/

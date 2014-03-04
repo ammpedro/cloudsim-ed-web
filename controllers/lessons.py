@@ -109,7 +109,7 @@ def get_unit_and_lesson_id_from_url(handler, url):
 def create_readonly_assessment_params(content, answers):
     """Creates parameters for a readonly assessment in the view templates."""
     assessment_params = {
-        'preamble': content['assessment']['preamble'],
+        'preamble': content['assessment']['preamble'],  
         'questionsList': content['assessment']['questionsList'],
         'answers': answers,
     }

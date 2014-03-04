@@ -498,9 +498,10 @@ class RegisterHandler(BaseHandler):
             cloudsim_ip = self.request.get('form05')
             cloudsim_uname = self.request.get('form06')
             cloudsim_passwd = self.request.get('form07')
+            cloudsim_simname = self.request.get('form08')
 
         Student.add_new_student_for_current_user(
-            name, country, age, cloudsim_ip, cloudsim_uname, cloudsim_passwd)
+            name, country, age, cloudsim_ip, cloudsim_uname, cloudsim_passwd, cloudsim_simname)
         # Render registration confirmation page
         self.redirect('/course#registration_confirmation')
 
@@ -547,8 +548,9 @@ class StudentProfileHandler(BaseHandler):
             not models.CAN_SHARE_STUDENT_PROFILE.value)
 
         self.template_value['cloudsim_ip'] = student.cloudsim_ip
-        self.template_value['cloudsim_uname'] = student.uname
-        self.template_value['cloudsim_passwd'] = student.passwd
+        self.template_value['cloudsim_uname'] = student.cloudsim_uname
+        self.template_value['cloudsim_passwd'] = student.cloudsim_passwd
+        self.template_value['cloudsim_simname'] = student.cloudsim_simname
 
         self.render('student_profile.html')
 
