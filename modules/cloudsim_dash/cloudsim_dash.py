@@ -55,7 +55,7 @@ class CloudsimAssessmentHandler(BaseHandler):
     """Handles simulation launches."""
 
     @db.transactional(xg=True)
-    def update_assessment_transaction(
+    def update_simassessment_transaction(
         self, email, assessment_type, new_answers, score):
         """Stores answer and updates user scores.
 
@@ -82,7 +82,7 @@ class CloudsimAssessmentHandler(BaseHandler):
 
         utils.set_answer(answers, assessment_type, new_answers)
 
-        assessments.store_score(course, student, assessment_type, score)
+        assessments.store_score(course, student, assessment_type, int(score))
 
         student.put()
         answers.put()   
@@ -90,29 +90,67 @@ class CloudsimAssessmentHandler(BaseHandler):
     def post(self):
         """Handles POST requests"""
 
-        print "now in handler"
+        def _get_now_str(days_offset=0):
+            """
+            Returns a utc string date time format of now, with optional
+            offset.
+            """
+            dt = datetime.timedelta(days=days_offset)
+            now = datetime.datetime.utcnow()
+            t = now - dt
+            s = t.isoformat()
+            return s    
+
         student = self.personalize_page_and_get_enrolled()
         if not student:
             print "not student"
             return
+
+        #if not self.assert_xsrf_token_or_fail(self.request, 'assessment-post'):
+        #    return
+
+        course = self.get_course()
+        #assessment_type = self.request.get('assessment_type')
+        #if not assessment_type:
+        #    self.error(404)
+        #    logging.error('No assessment type supplied.')
+        #    return
+
+        #unit = course.find_unit_by_id(assessment_type)
+        #if unit is None or unit.type != verify.UNIT_TYPE_ASSESSMENT:
+        #    self.error(404)
+        #    logging.error('No assessment named %s exists.', assessment_type)
+        #    return
+
 
         self.template_value['cloudsim_ip'] = student.cloudsim_ip
         self.template_value['cloudsim_uname'] = student.cloudsim_uname
         self.template_value['cloudsim_passwd'] = student.cloudsim_passwd
         self.template_value['cloudsim_simname'] = student.cloudsim_simname
 
+        print student.cloudsim_ip
+        print student.cloudsim_uname
+        print student.cloudsim_passwd
+        print student.cloudsim_simname
+
         action = self.request.get('action')
         assessment_name = self.request.get('name')
 
 
         print action
-
         if action == "launch":
             try:
                 task_dict = {}
-                task_dict['task_title'] = 'Cloudsim-Ed_Actuation_Challenge'
+                task_dict['task_title'] = 'Cloudsim-Ed_' + assessment_name
                 task_dict['ros_package'] = 'cloudsim_ed_actuation'
-                task_dict['ros_launch'] = 'cloudsim_ed_actuation_challenge_01.launch'
+                print assessment_name
+                if assessment_name == "Lab1":
+                    task_dict['ros_launch'] = 'cloudsim_ed_actuation_challenge_01.launch'
+                elif assessment_name == "Lab2":
+                    task_dict['ros_launch'] = 'cloudsim_ed_actuation_challenge_02.launch'
+                else:
+                    task_dict['ros_launch'] = 'cloudsim_ed_actuation_challenge_03.launch'
+
                 task_dict['launch_args'] = ''
                 task_dict['timeout'] = '3600'
                 task_dict['latency'] = '0'
@@ -120,16 +158,28 @@ class CloudsimAssessmentHandler(BaseHandler):
                 task_dict['downlink_data_cap'] = '0'
                 task_dict['local_start'] = _get_now_str(-1)
                 task_dict['local_stop'] = _get_now_str(1)
-                task_dict['bash_src'] =  ''  
+                task_dict['bash_src'] = '/home/ubuntu/cloudsim-ed-actuation/src/cloudsim-ed-actuation/setup.bash'  
                 task_dict['vrc_id'] = 1
                 task_dict['vrc_num'] = 1
 
-                cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd)
+                # create and start cloudsim task
+                cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd) 
                 task_id = cloudsim_api.create_task(student.cloudsim_simname, task_dict)
+                task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
                 cloudsim_api.start_task(student.cloudsim_simname, task_id)
-                alert = "Task Created"
+                print "Task Created"
 
-                cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd)
+                # start gzweb
+                cloudsim_api.start_gzweb(student.cloudsim_simname)
+                # start ipython notebook
+                cloudsim_api.start_notebook(student.cloudsim_simname)
+                simulator_data = cloudsim_api.get_constellation_data(student.cloudsim_simname)
+                gzweb_url = 'http://' + simulator_data['sim_public_ip'] + ':8080'
+                ipynb_url = 'http://' + simulator_data['sim_public_ip'] + ':8888'
+                
+                self.template_value['gzweb'] = gzweb_url
+                self.template_value['ipynb'] = ipynb_url
+                self.render('simpage.html')    
 
             except:
                 e = sys.exc_info()[0]
@@ -140,20 +190,35 @@ class CloudsimAssessmentHandler(BaseHandler):
             print name
     
         elif action == "getscore":
-            print name
-
+            msg = ''
+            score = 0
+            cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd)
+            task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
+            for task in task_list:
+                if task['task_state'] == 'running':
+                    s = str(task['task_message'])
+            task_msg = dict(zip(s.splitlines()[0].split(','), s.splitlines()[1].split(',')))
+  
             course = self.get_course()
-            print course
-            assessment_type = assessment_name
-
             answers = ''
-            score = 5
+            score = int(task_msg['field.completion_score']) * 10
 
             # Record assessment transaction.
-            student = self.update_assessment_transaction(
-                student.key().name(), assessment_type, answers, score)
+            student = self.update_simassessment_transaction(
+                student.key().name(), assessment_name, answers, int(score))
+            # FIXME later: mark assessment as completed
+            #course.get_progress_tracker().put_assessment_completed(
+            #    student, assessment_name)
 
-        self.redirect('/assessment?name=Lab1')
+            # stop stuff
+            #cloudsim_api.stop_gzweb(student.cloudsim_simname)
+            #cloudsim_api.stop_notebook(student.cloudsim_simname)
+            #cloudsim_api.stop_task(student.cloudsim_simname)
+            
+            self.template_value['navbar'] = {}
+            self.template_value['score'] = score
+            self.template_value['assessment_name'] = assessment_name
+            self.render('test_confirmation.html')
 
 
 class CloudsimCredentialsEditHandler(BaseHandler):
@@ -236,9 +301,8 @@ class CloudsimTestLaunchHandler(BaseHandler):
  
         if action == "checkstatus":
             try:
-                simulator_name = self.request.get('simulator_name')
                 cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd) 
-                task_list = cloudsim_api.get_tasks(simulator_name)
+                task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
                 status = ""
 
             except:
@@ -258,7 +322,6 @@ class CloudsimTestLaunchHandler(BaseHandler):
                 if profile:
                     name = profile.nick_name
                
-                simulator_name = self.request.get('simulator_name')
                 task_name = self.request.get('task_name')
 
                 task_title = self.request.get('task_title')
@@ -282,10 +345,9 @@ class CloudsimTestLaunchHandler(BaseHandler):
                 task_dict['vrc_num'] = 1
 
                 cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd)
-                task_id = cloudsim_api.create_task(simulator_name, task_dict)
-                task_list = cloudsim_api.get_tasks(simulator_name)
+                task_id = cloudsim_api.create_task(student.cloudsim_simname, task_dict)
+                task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
                 status = ""
-                #cloudsim_api.start_task(session.sim_name, task_id)
                 alert = "Task Created"
             except:
                 e = sys.exc_info()[0]

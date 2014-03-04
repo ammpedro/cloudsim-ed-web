@@ -62,5 +62,7 @@ var assessment = {
   // the course editor interface.
   assessmentName: 'Pre', // unique name submitted along with all of the answers
 
-  checkAnswers: false    // render a "Check your Answers" button to allow students to check answers prior to submitting?
+  checkAnswers: false,    // render a "Check your Answers" button to allow students to check answers prior to submitting?
+
+  examAssessment: true
 }

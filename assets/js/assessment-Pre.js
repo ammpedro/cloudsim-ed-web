@@ -64,5 +64,5 @@ var assessment = {
 
   checkAnswers: false,    // render a "Check your Answers" button to allow students to check answers prior to submitting?
 
-  exam_assessment: true
+  examAssessment: true
 }

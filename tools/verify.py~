@@ -53,7 +53,7 @@ SCHEMA = {
         'assessmentName': STRING,
         'preamble': STRING,
         'checkAnswers': BOOLEAN,
-        'examAssessment': BOOLEAN,
+        'exam_assessment': BOOLEAN,
         'questionsList': [{
             'questionHTML': STRING,
             'lesson': STRING,

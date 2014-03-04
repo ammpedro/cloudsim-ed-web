@@ -593,7 +593,7 @@ function renderAssessment(assessment, domRoot) {
       buttonText = trans.SUBMIT_ASSIGNMENT_TEXT;
     }
     var disabledHtml = transientStudent ? ' disabled="true" ' : '';
-    if (assessment.exam_assessment) {
+    if (assessment.examAssessment) {
         domRoot.append(
             '<br><button type="button" class="gcb-button" id="submitAnswersBtn" ' +
             disabledHtml + '>' + buttonText + '</button>');

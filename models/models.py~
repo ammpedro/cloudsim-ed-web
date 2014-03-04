@@ -169,10 +169,10 @@ class PersonalProfile(BaseEntity):
     country = db.StringProperty(indexed=False)
     age = db.StringProperty(indexed=False)    
 
-    cloudsim_ip = db.StringProperty(indexed=False)
-    cloudsim_uname = db.StringProperty(indexed=False)
-    cloudsim_passwd = db.StringProperty(indexed=False)
-    cloudsim_simname = db.StringProperty(indexed=False)
+    #cloudsim_ip = db.StringProperty(indexed=False)
+    #cloudsim_uname = db.StringProperty(indexed=False)
+    #cloudsim_passwd = db.StringProperty(indexed=False)
+    #loudsim_simname = db.StringProperty(indexed=False)
 
     _PROPERTY_EXPORT_BLACKLIST = [email, legal_name, nick_name, date_of_birth]
 

@@ -79,7 +79,5 @@ var assessment = {
   assessmentName: 'Fin', // unique name submitted along with all of the answers
 
   checkAnswers: true     // render a "Check your Answers" button to allow students to check answers prior to submitting?
-
-  examAssessment: true
 }
 

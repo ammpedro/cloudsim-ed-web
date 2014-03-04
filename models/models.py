@@ -550,7 +550,8 @@ class Student(BaseEntity):
         MemcacheManager.delete(self._memcache_key(self.key().name()))
 
     @classmethod
-    def add_new_student_for_current_user(cls, nick_name, country, age, cloudsim_ip, cloudsim_uname, cloudsim_passwd):
+    def add_new_student_for_current_user(cls, nick_name, country, age, cloudsim_ip, cloudsim_uname, 
+                                                                                    cloudsim_passwd, cloudsim_simname):
         StudentProfileDAO.add_new_student_for_current_user(
             nick_name, country, age, cloudsim_ip, cloudsim_uname, cloudsim_passwd, cloudsim_simname)
 
