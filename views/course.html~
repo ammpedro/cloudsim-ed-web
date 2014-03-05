@@ -14,9 +14,12 @@
       cbShowMsg(regClosedMsg);
       setTimeout(function() {cbHideMsg();}, 20000);
     }
+    var regClosedMsg = "{{ gettext('Please register for the course.') }}";
+    if(window.location.hash == '#registration_required') {
+      cbShowMsg(regClosedMsg);
+      setTimeout(function() {cbHideMsg();}, 20000);
+    }
   </script>
-
-<section id="home" data-type="background" data-speed="10">  
   <div class="gcb-cols">
     <div class="gcb-col-11 gcb-aside">
       {% include 'summary.html' %}
@@ -27,14 +30,10 @@
     </div>
 </div>
 {% endblock %}
-</section>
-
-<section id="schedule" data-type="background" data-speed="10">  
 
 {% block main_content %}
     <div style="margin-top: 20px;" class="gcb-cols">
       <div class="gcb-col-1">
-
       </div>
       <div class="gcb-col-9">
 
@@ -173,4 +172,3 @@
       </div>
     </div>
 {% endblock %}
-</section>

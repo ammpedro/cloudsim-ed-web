@@ -9,7 +9,7 @@
 
 <script>
 var alertMsg = "{{ alert }}";
-if not alert {
+if (alertMsg != "") {
   cbShowMsg(alertMsg);
   setTimeout(function() {cbHideMsg();}, 20000);
 }
@@ -74,7 +74,7 @@ tr {text-align: left;}
             <label><button class="gcb-button" type="submit"> Check Status </button></label></br>
             </form>
         </div></p>
-        </br><hr></br>
+        </br></br><hr></br>
 
         <h1>Create a Task</h1>
         <p><div>
@@ -88,7 +88,7 @@ tr {text-align: left;}
             <P><label> ROS Package:</label> <input name="ros_package" id="ros_package" required type="text" value="drcsim_gazebo"></br>      
             <P><label> Launch File:</label> <input name="launch_filename" id="launch_filename" required type="text" value="vrc_task_1.launch"></br>
             <P><label> Bash File:</label> <input name="bash_filename" id="bash_filename" required type="text" value="/home/ubuntu/cloudsim/sim_setup.bash"></br>
-            <p><label><button class="gcb-button" type="submit"> Launch Task </button></label></br>
+            <p><label><button class="gcb-button" type="submit"> Launch Task </button></label></br></br>
         </form>
         </div></p>
 

@@ -105,9 +105,9 @@ class CloudsimAssessmentHandler(BaseHandler):
             return s    
 
         student = self.personalize_page_and_get_enrolled()
-        print student.is_transient
         if not student:
             print "not student"
+            self.redirect('/course#registration_required')
             return
 
         #if not self.assert_xsrf_token_or_fail(self.request, 'assessment-post'):
@@ -183,59 +183,69 @@ class CloudsimAssessmentHandler(BaseHandler):
                 e = sys.exc_info()[0]
                 print(e)
                 alert = "An error occured while connecting to the simulator; " + str(e)
+                self.template_value['alert'] = alert
+                self.render('/cloudlaunch.html')
 
         elif action == "reset":
             print name
     
         elif action == "getscore":
-            msg = ''
-            score = 0
-            student = self.personalize_page_and_get_enrolled()
-            cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd)
-            task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
-            for task in task_list:
-                if task['task_state'] == 'running':
-                    s = str(task['task_message'])
-            task_msg = dict(zip(s.splitlines()[0].split(','), s.splitlines()[1].split(',')))
-  
-            course = self.get_course()
-            answers = ''
-            
-            if assessment_name == "Lab1":
-                score = int(float(task_msg['field.completion_score'])/2) * 100
-            elif assessment_name == "Lab2":
-                score = int(task_msg['field.completion_score']) * 10
-            elif assessment_name == "Lab3":
-                score = int(task_msg['field.completion_score']) * 10
-            else:
-                score = int(task_msg['field.completion_score']) * 10
+            try:
+                msg = ''
+                score = 0
+                student = self.personalize_page_and_get_enrolled()
+                cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd)
+                task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
+                for task in task_list:
+                    if task['task_state'] == 'running':
+                        s = str(task['task_message'])
+                task_msg = dict(zip(s.splitlines()[0].split(','), s.splitlines()[1].split(',')))
 
-            print student.is_transient
+                course = self.get_course()
+                answers = ''
+                
+                if assessment_name == "Lab1":
+                    score = int(float(task_msg['field.completion_score'])/2) * 100
+                elif assessment_name == "Lab2":
+                    score = int(task_msg['field.completion_score']) * 10
+                elif assessment_name == "Lab3":
+                    score = int(task_msg['field.completion_score']) * 10
+                else:
+                    score = int(task_msg['field.completion_score']) * 10
 
-            # Record assessment transaction.
-            assessment_transaction = self.update_simassessment_transaction(
-                student.key().name(), assessment_name, answers, int(score))
-            # FIXME later: mark assessment as completed
-            course.get_progress_tracker().put_assessment_completed(student, assessment_name)
+                # Record assessment transaction.
+                assessment_transaction = self.update_simassessment_transaction(
+                    student.key().name(), assessment_name, answers, int(score))
+                # FIXME later: mark assessment as completed
+                course.get_progress_tracker().put_assessment_completed(student, assessment_name)
 
-            # stop stuff
-            cloudsim_api.stop_gzweb(student.cloudsim_simname)
-            cloudsim_api.stop_notebook(student.cloudsim_simname)
-            cloudsim_api.stop_task(student.cloudsim_simname)
-            
-            self.template_value['navbar'] = {}
-            self.template_value['score'] = score
+                # stop stuff
+                cloudsim_api.stop_gzweb(student.cloudsim_simname)
+                cloudsim_api.stop_notebook(student.cloudsim_simname)
+                cloudsim_api.stop_task(student.cloudsim_simname)
 
-            if assessment_name == "Lab1":
-                self.template_value['assessment_name'] = 'Actuation Challenge'
-            elif assessment_name == "Lab2":
-                self.template_value['assessment_name'] = 'Perception Challenge'
-            elif assessment_name == "Lab3":
-                self.template_value['assessment_name'] = 'Navigation Challenge'
-            else:                
-                self.template_value['assessment_name'] = assessment_name
+                # delete task 
+                
+                self.template_value['navbar'] = {}
+                self.template_value['score'] = score
 
-            self.render('test_confirmation.html')
+                if assessment_name == "Lab1":
+                    self.template_value['assessment_name'] = 'Actuation Challenge'
+                elif assessment_name == "Lab2":
+                    self.template_value['assessment_name'] = 'Perception Challenge'
+                elif assessment_name == "Lab3":
+                    self.template_value['assessment_name'] = 'Navigation Challenge'
+                else:                
+                    self.template_value['assessment_name'] = assessment_name
+
+                self.render('test_confirmation.html')
+
+            except:
+                e = sys.exc_info()[0]
+                print(e)
+                alert = "An error occured while connecting to the simulator; " + str(e)
+                self.template_value['alert'] = alert
+                self.render('/cloudlaunch.html')
 
 
 class CloudsimCredentialsEditHandler(BaseHandler):
@@ -246,6 +256,7 @@ class CloudsimCredentialsEditHandler(BaseHandler):
         student = self.personalize_page_and_get_enrolled()
         if not student:
             print "not student"
+            self.redirect('/course#registration_required')
             return
 
         if not self.assert_xsrf_token_or_fail(self.request, 'student-edit'):
@@ -269,6 +280,7 @@ class CloudsimTestLaunchHandler(BaseHandler):
 
         student = self.personalize_page_and_get_enrolled()
         if not student:
+            self.redirect('/course#registration_required')
             return
 
         name = student.name
@@ -331,6 +343,8 @@ class CloudsimTestLaunchHandler(BaseHandler):
             try:
                 student = self.personalize_page_and_get_enrolled()
                 if not student:
+                    alert = "Please Register to view simulations."
+                    self.redirect('/course#registration_required')
                     return
 
                 course = self.get_course()

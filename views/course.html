@@ -14,6 +14,11 @@
       cbShowMsg(regClosedMsg);
       setTimeout(function() {cbHideMsg();}, 20000);
     }
+    var regFirstMsg = "{{ gettext('Please register for the course.') }}";
+    if(window.location.hash == '#registration_required') {
+      cbShowMsg(regFirstMsg);
+      setTimeout(function() {cbHideMsg();}, 20000);
+    }
   </script>
   <div class="gcb-cols">
     <div class="gcb-col-11 gcb-aside">
