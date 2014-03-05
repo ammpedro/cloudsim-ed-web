@@ -7,13 +7,12 @@
 
 {% block top_content %}
 
-
-
-
 <script>
-    $(function() {
-      cbShowAlert("{{ alert }}");
-    });
+var alertMsg = "{{ alert }}";
+if not alert {
+  cbShowMsg(alertMsg);
+  setTimeout(function() {cbHideMsg();}, 20000);
+}
 </script>
 
 <div>

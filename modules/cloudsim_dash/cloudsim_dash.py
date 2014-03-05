@@ -45,6 +45,8 @@ from models.models import TransientStudent
 from models.models import StudentAnswersEntity
 from models.roles import Roles
 
+from tools import verify
+
 from controllers import assessments
 
 from google.appengine.ext import db
@@ -69,6 +71,7 @@ class CloudsimAssessmentHandler(BaseHandler):
             the student instance.
         """
         student = Student.get_enrolled_student_by_email(email)
+        print student.is_transient
         course = self.get_course()
 
         # It may be that old Student entities don't have user_id set; fix it.
@@ -102,6 +105,7 @@ class CloudsimAssessmentHandler(BaseHandler):
             return s    
 
         student = self.personalize_page_and_get_enrolled()
+        print student.is_transient
         if not student:
             print "not student"
             return
@@ -110,33 +114,24 @@ class CloudsimAssessmentHandler(BaseHandler):
         #    return
 
         course = self.get_course()
-        #assessment_type = self.request.get('assessment_type')
-        #if not assessment_type:
-        #    self.error(404)
-        #    logging.error('No assessment type supplied.')
-        #    return
+        assessment_name = self.request.get('name')
+        if not assessment_name:
+            self.error(404)
+            print 'No assessment type supplied.'
+            return
 
-        #unit = course.find_unit_by_id(assessment_type)
-        #if unit is None or unit.type != verify.UNIT_TYPE_ASSESSMENT:
-        #    self.error(404)
-        #    logging.error('No assessment named %s exists.', assessment_type)
-        #    return
-
+        unit = course.find_unit_by_id(assessment_name)
+        if unit is None or unit.type != verify.UNIT_TYPE_ASSESSMENT:
+            self.error(404)
+            print ('No assessment named %s exists.', assessment_name)
+            return
 
         self.template_value['cloudsim_ip'] = student.cloudsim_ip
         self.template_value['cloudsim_uname'] = student.cloudsim_uname
         self.template_value['cloudsim_passwd'] = student.cloudsim_passwd
         self.template_value['cloudsim_simname'] = student.cloudsim_simname
 
-        print student.cloudsim_ip
-        print student.cloudsim_uname
-        print student.cloudsim_passwd
-        print student.cloudsim_simname
-
         action = self.request.get('action')
-        assessment_name = self.request.get('name')
-
-
         print action
         if action == "launch":
             try:
@@ -165,10 +160,13 @@ class CloudsimAssessmentHandler(BaseHandler):
                 # create and start cloudsim task
                 cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd) 
                 task_id = cloudsim_api.create_task(student.cloudsim_simname, task_dict)
-                task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
-                cloudsim_api.start_task(student.cloudsim_simname, task_id)
                 print "Task Created"
-
+                task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
+                for task in task_list:
+                    if (task['task_message'] == 'Ready to run') and (task['task_title'] == task_dict['task_title']):          
+                        cloudsim_api.start_task(student.cloudsim_simname, task['task_id'])
+                        print "Task Started"
+                
                 # start gzweb
                 cloudsim_api.start_gzweb(student.cloudsim_simname)
                 # start ipython notebook
@@ -192,6 +190,7 @@ class CloudsimAssessmentHandler(BaseHandler):
         elif action == "getscore":
             msg = ''
             score = 0
+            student = self.personalize_page_and_get_enrolled()
             cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd)
             task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
             for task in task_list:
@@ -201,23 +200,43 @@ class CloudsimAssessmentHandler(BaseHandler):
   
             course = self.get_course()
             answers = ''
-            score = int(task_msg['field.completion_score']) * 10
+            
+            if assessment_name == "Lab1":
+                score = int(float(task_msg['field.completion_score'])/2) * 100
+            elif assessment_name == "Lab2":
+                score = int(task_msg['field.completion_score']) * 10
+            elif assessment_name == "Lab3":
+                score = int(task_msg['field.completion_score']) * 10
+            else:
+                score = int(task_msg['field.completion_score']) * 10
+
+            print student.is_transient
 
             # Record assessment transaction.
-            student = self.update_simassessment_transaction(
+            assessment_transaction = self.update_simassessment_transaction(
                 student.key().name(), assessment_name, answers, int(score))
             # FIXME later: mark assessment as completed
-            #course.get_progress_tracker().put_assessment_completed(
-            #    student, assessment_name)
+            course.get_progress_tracker().put_assessment_completed(student, assessment_name)
 
             # stop stuff
-            #cloudsim_api.stop_gzweb(student.cloudsim_simname)
-            #cloudsim_api.stop_notebook(student.cloudsim_simname)
-            #cloudsim_api.stop_task(student.cloudsim_simname)
+            cloudsim_api.stop_gzweb(student.cloudsim_simname)
+            cloudsim_api.stop_notebook(student.cloudsim_simname)
+            cloudsim_api.stop_task(student.cloudsim_simname)
+
+            # delete task 
             
             self.template_value['navbar'] = {}
             self.template_value['score'] = score
-            self.template_value['assessment_name'] = assessment_name
+
+            if assessment_name == "Lab1":
+                self.template_value['assessment_name'] = 'Actuation Challenge'
+            elif assessment_name == "Lab2":
+                self.template_value['assessment_name'] = 'Perception Challenge'
+            elif assessment_name == "Lab3":
+                self.template_value['assessment_name'] = 'Navigation Challenge'
+            else:                
+                self.template_value['assessment_name'] = assessment_name
+
             self.render('test_confirmation.html')
 
 

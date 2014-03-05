@@ -45,12 +45,12 @@
             <input type="hidden" name="xsrf_token" value="{{ student_edit_xsrf_token|escape }}">
             <h2><label for="cloudsim_cred">
               {# I18N: Label for the input field that allows the student to change cloudsim ip. #}
-              {{ gettext('Edit CloudSim Credentials') }}
+              {{ gettext('Update CloudSim Credentials') }}
             </label></h2>
             <fieldset style="border: none;">
               <p>
-                <table style= "border: none" ><tr>
-                <td style= "border: none; text-align: bottom;"><label> IP Address </label></td>
+                <table><tr>
+                <td style= "border: none"><label> IP Address </label></td>
                 <td style= "border: none"><label> Username </label></td>
                 <td style= "border: none"><label> Password </label></td>
                 <td style= "border: none"><label> Simulator Name </label></td>
@@ -66,7 +66,7 @@
             <p>
               <button class="gcb-button" type="submit">
                 {# I18N: Text for a button that allows the student to save changes to his/her name for the certificate. #}
-                {{ gettext('Edit Credentials') }}
+                {{ gettext('Update Credentials') }}
               </button>
             </p>
           </form>

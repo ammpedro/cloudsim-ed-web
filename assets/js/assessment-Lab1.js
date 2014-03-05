@@ -23,11 +23,11 @@
 var assessment = {
   // HTML to display at the start of the page
   preamble: '<h1>Actuation Challenge</h1>\
+            Teleoperate a differential drive robot around a track. Conserve batteries and get more points for each gate the robot goes through! <br><br> \
              <form method="post" action="/cloudlaunch/assess?action=launch&name=Lab1">\
-             <button class="gcb-button" type="submit">Launch Task</button> &nbsp;&nbsp;&nbsp\
-             <button class="gcb-button" type="submit" formaction="/cloudlaunch/assess?action=reset&name=Lab1">Reset Task</button> &nbsp;&nbsp;&nbsp \
-             <button class="gcb-button" type="submit" formaction="/cloudlaunch/assess?action=getscore&name=Lab1">End Task</button></form>',
-
+             <button class="gcb-button" type="submit">Start Challenge</button> &nbsp;&nbsp;&nbsp\
+             <button class="gcb-button" type="submit" formaction="/cloudlaunch/assess?action=getscore&name=Lab1">Finish Challenge</button></form>',
+            
   // An ordered list of questions, with each question's type implicitly determined by the fields it possesses:
   //   choices              - multiple choice question (with exactly one correct answer)
   //   correctAnswerString  - case-insensitive string match

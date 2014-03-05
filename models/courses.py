@@ -1747,7 +1747,7 @@ class Course(object):
         """Gets the overall course score for a student."""
         score_list = self.get_all_scores(student)
         overall_score = 0
-        total_weight = 0
+        total_weight = 1
         for unit in score_list:
             if not unit['human_graded']:
                 total_weight += unit['weight']
