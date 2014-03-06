@@ -105,7 +105,7 @@
             {% if lesson.video %}
               <p class="gcb-video-container">
                 {# I18N: Alt text for an embedded YouTube video player. #}
-                <iframe seamless width="95%" height="600" src="{{ lesson.video }}"></iframe>
+                <iframe width="95%" height="600" src="{{ lesson.video }}"></iframe>
               </p>
             {% endif %}
 

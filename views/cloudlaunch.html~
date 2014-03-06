@@ -42,9 +42,12 @@ tr {text-align: left;}
     </div>
     <div class="gcb-col-9">
 
-        <h1>Available Tasks</h1>
+        <h1>Status Check</h1>
         <p><div>
-        {{ status }} <br/>
+        <h2> Simulator Machine </h2>
+        {{ status }} 
+        {% if status == "An Error Occured." %} <a href="/student/home"> Update CloudSim credentials? </a><br/> {% endif %}
+        <h2> Tasks </h2>
         {% if task_list %} 
             <table width = 100%>
             {% for task in task_list %}
@@ -61,22 +64,24 @@ tr {text-align: left;}
             No tasks here.
 
         {% endif %}
-        
+        <br><br>
+        <a class="gcb-button" href="/student/home"> Change Credentials? </a>
         </div></p><br><hr><br>
 
-        <h1>Connect to Simulator Constellation</h1>
+        <h1>Simulator Constellation Details</h1>
         <P><div>
             <form method = "Post" action = "/cloudlaunch?action=checkstatus">
             <label> CloudSim IP:</label> <input name="ip_address" id="ip_address" disabled type="text" pattern ="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" value= {{ cloudsim_ip }}></br>
             <label> Username:</label> <input name="username" id="username" disabled type="text" value = {{ cloudsim_uname }}></br>
             <label> Password:</label> <input name="password" id="password" disabled type="password" value = {{ cloudsim_passwd }}></br>
-            <label> Simulator Name:</label> <input name="simulator_name" id="simulator_name" disabled value = {{ cloudsim_simname }}></br></br>
-            <label><button class="gcb-button" type="submit"> Check Status </button></label></br></br>
+            <label> Simulator Name:</label> <input name="simulator_name" id="simulator_name" disabled value = {{ cloudsim_simname }}></br>
+            <label><button class="gcb-button" type="submit"> Refresh Status </button></label></br>
             </form>
-        </div></p>
+        </div></p> 
         </br></br><hr></br>
 
         <h1>Create a Task</h1>
+        For manually launching (not starting) special tasks. Hope you know what you're doing.
         <p><div>
         <form method = "Post" action = "/cloudlaunch?action=createtask">
             <!-- <p><label> CloudSim IP:</label> <input name="ip_address" id="ip_address" required type="text" pattern ="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" value="0.0.0.0"></br>

@@ -1,21 +1,16 @@
 unit_id,unit_title,lesson_id,lesson_title,lesson_activity,lesson_activity_name,lesson_notes,lesson_video_id,lesson_objectives
-1,Introduction,1,Overview,,,,,"An introduction to the course and the software learning tools. <br> At the end of the course, you will be able to: <ul><li>Discover the current state of robotics.</li><li>Differentiate hardware and software requirements needed to construct a robot</li></ul>"
-1,Introduction,2,Tools Overview,,,,,"This section introduces the software tools needed to run simulation tasks in the course."
-1,Introduction,3,Task 1-1: Running CloudSim,yes,Lesson 1.3 Activity,,,"This task verifies that CloudSim is runninng to be able to run consequent robotics simulation tasks. <br> At the end of this task, you will be able to: <ul><li>Create an Amazon Web Services account. </li><li> Install required cloudsim components. </li><li> Login to a CloudSim instance. </li></ul>"
-1,Introduction,4,Task 1-2: Launch an Empty World Simulation,yes,Lesson 1.4 Activity,,,
-1,Introduction,5,Task 1-3 Manipulating Simulated World,yes,Lesson 1.5 Activity,,,
 2,Actuation,1,Overview,,,,,
-2,Actuation,2,DC Motors,,,,,
+2,Actuation,2,DC Motors,,,,https://en.wikipedia.org/w/index.php?title=DC_motor&printable=yes,
 2,Actuation,3,Task 2-1 Motor Characterization,yes,Lesson 2.2 Activity,,,
 2,Actuation,4,Task 2-3 Motor Control,yes,Lesson 2.3 Activity,,,
-2,Actuation,5,Wheeled Mobile Robots,,,,,
-2,Actuation,6,Task 2-4 Differential Drive System,yes,Lesson 2.4 Activity,,,
+2,Actuation,5,Wheeled Mobile Robots,,,,https://en.wikipedia.org/w/index.php?title=Mobile_robot&printable=yes,
+2,Actuation,6,Task 2-4 Differential Drive System,yes,Lesson 2.4 Activity,,https://en.wikipedia.org/w/index.php?title=Differential_wheeled_robot&printable=yes,
 2,Actuation,7,Task 2-5 Teleoperation,yes,Lesson 2.5 Activity,,,
 3,Perception,1,Overview,,,,,
-3,Perception,2,Task 3-1 Tactile Sensors,yes,Lesson 3.1 Activity,,,
-3,Perception,3,Task 3-2 RGB-D Sensors,yes,Lesson 3.2 Activity,,,
-3,Perception,4,Task 3-3 Intertial Measurement Units,yes,Lesson 3.3 Activity,,,
+3,Perception,2,Task 3-1 Tactile Sensors,yes,Lesson 3.1 Activity,,https://en.wikipedia.org/w/index.php?title=Tactile_sensor&printable=yes,
+3,Perception,3,Task 3-2 RGB-D Sensors,yes,Lesson 3.2 Activity,,https://en.wikipedia.org/w/index.php?title=Kinect&printable=yes,
+3,Perception,4,Task 3-3 Intertial Measurement Units,yes,Lesson 3.3 Activity,,https://en.wikipedia.org/w/index.php?title=Inertial_measurement_unit&printable=yes,
 4,Navigation,1,Overview,,,,,
-4,Navigation,2,Task 4-1 Obstacle Avoidance ,yes,Lesson 4.1 Activity,,,
-4,Navigation,3,Task 4-2 Vision Based Navigation,yes,Lesson 4.2 Activity,,,
+4,Navigation,2,Task 4-1 Obstacle Avoidance ,yes,Lesson 4.1 Activity,,https://en.wikipedia.org/w/index.php?title=Obstacle_avoidance&printable=yes,
+4,Navigation,3,Task 4-2 Vision Based Navigation,yes,Lesson 4.2 Activity,,https://en.wikipedia.org/w/index.php?title=Mobile_robot_navigation&printable=yes,
 

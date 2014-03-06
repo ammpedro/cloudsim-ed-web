@@ -25,6 +25,7 @@ import sys
 
 import cgi
 import urllib
+import json 
 
 from common import safe_dom
 from common import tags
@@ -103,12 +104,36 @@ class CloudsimAssessmentHandler(BaseHandler):
             t = now - dt
             s = t.isoformat()
             return s    
-
+        alert = ''
         student = self.personalize_page_and_get_enrolled()
         if not student:
             print "not student"
             self.redirect('/course#registration_required')
             return
+
+        def wait_for_task_state(cloudsim_api,
+                                constellation_name,
+                                task_id,
+                                target_state,
+                                max_count=100,
+                                sleep_secs=1):
+            """
+            Wait until the task is in a target state (ex "running", or "stopped")
+            """
+            count = 0
+            while True:
+                time.sleep(sleep_secs)
+                count += 1
+                if count > max_count:
+                    raise RestException("Timeout in start_task"
+                                        "%s for %s" % (task_id, constellation_name))    
+                task_dict = cloudsim_api.read_task(constellation_name, task_id)
+                current_state = task_dict['task_state']
+                print("%s/%s Task %s: %s" % (count, max_count,
+                                             task_id,
+                                             current_state))
+                if current_state == target_state:
+                    return
 
         #if not self.assert_xsrf_token_or_fail(self.request, 'assessment-post'):
         #    return
@@ -141,10 +166,13 @@ class CloudsimAssessmentHandler(BaseHandler):
                 print assessment_name
                 if assessment_name == "Lab1":
                     task_dict['ros_launch'] = 'cloudsim_ed_actuation_challenge_01.launch'
+                    ipynb_name = "Actuation_Challenge_01"
                 elif assessment_name == "Lab2":
-                    task_dict['ros_launch'] = 'cloudsim_ed_actuation_challenge_02.launch'
-                else:
-                    task_dict['ros_launch'] = 'cloudsim_ed_actuation_challenge_03.launch'
+                    task_dict['ros_launch'] = 'cloudsim_ed_perception_challenge_01.launch'
+                    ipynb_name = "Perception_Challenge_01"
+                elif assessment_name == "Lab3":
+                    task_dict['ros_launch'] = 'cloudsim_ed_navigation_challenge_01.launch'
+                    ipynb_name = "Navigation_Challenge_01"
 
                 task_dict['launch_args'] = ''
                 task_dict['timeout'] = '3600'
@@ -159,31 +187,53 @@ class CloudsimAssessmentHandler(BaseHandler):
 
                 # create and start cloudsim task
                 cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd) 
-                task_id = cloudsim_api.create_task(student.cloudsim_simname, task_dict)
+                cloudsim_api.create_task(student.cloudsim_simname, task_dict)
                 print "Task Created"
                 task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
                 for task in task_list:
                     if (task['task_message'] == 'Ready to run') and (task['task_title'] == task_dict['task_title']):          
                         cloudsim_api.start_task(student.cloudsim_simname, task['task_id'])
-                        print "Task Started"
-                
+                        wait_for_task_state(cloudsim_api,
+                                            student.cloudsim_simname,
+                                            task['task_id'],
+                                            'running',
+                                            max_count,
+                                            sleep_secs)
+
                 # start gzweb
                 cloudsim_api.start_gzweb(student.cloudsim_simname)
                 # start ipython notebook
                 cloudsim_api.start_notebook(student.cloudsim_simname)
                 simulator_data = cloudsim_api.get_constellation_data(student.cloudsim_simname)
                 gzweb_url = 'http://' + simulator_data['sim_public_ip'] + ':8080'
-                ipynb_url = 'http://' + simulator_data['sim_public_ip'] + ':8888'
+
+                ipynb_id = ''
+                data = urllib2.urlopen(simulator_data["http://"+'sim_public_ip']+":8888/notebooks") 
+                json_data=data.read()
+                list_o_dicts=json.loads(json_data)
+                for d in list_o_dicts:
+                    if d['name'] == ipynb_name: 
+                        ipynb_id = d['notebook_id']
+
+                ipynb_url = 'http://' + simulator_data['sim_public_ip'] + ':8888/' + ipynb_id
+
+                splitscreen_url = "http://" + student.cloudsim_ip + "/cloudsim/inside/cgi-bin/splitsim?sim_ip=" + simulator_data['sim_public_ip'] +"&notebook_id=" + ipynb_id
+
+                goto_url = "/assessment?name=" + assessment_name
                 
+                self.template_value['challenge_name'] = assessment_name
                 self.template_value['gzweb'] = gzweb_url
                 self.template_value['ipynb'] = ipynb_url
-                self.render('simpage.html')    
+                self.template_value['splitscn'] = splitscreen_url
+                self.render(challenge.html)    
 
             except:
                 e = sys.exc_info()[0]
                 print(e)
-                alert = "An error occured while connecting to the simulator; " + str(e)
-
+                alert = "An error occured while starting the challenge. Are your CloudSim credentials working?" + str(e)
+                self.template_value['navbar'] = {}
+                self.template_value['alert'] = alert
+                self.render('/cloudlaunch.html')
 
         elif action == "reset":
             print name
@@ -198,7 +248,11 @@ class CloudsimAssessmentHandler(BaseHandler):
                 for task in task_list:
                     if task['task_state'] == 'running':
                         s = str(task['task_message'])
-                task_msg = dict(zip(s.splitlines()[0].split(','), s.splitlines()[1].split(',')))
+
+                if s:
+                    task_msg = dict(zip(s.splitlines()[0].split(','), s.splitlines()[1].split(',')))
+                else:
+                    return
 
                 course = self.get_course()
                 answers = ''
@@ -223,17 +277,22 @@ class CloudsimAssessmentHandler(BaseHandler):
                 cloudsim_api.stop_notebook(student.cloudsim_simname)
                 cloudsim_api.stop_task(student.cloudsim_simname)
 
-                # delete task 
-                
                 self.template_value['navbar'] = {}
                 self.template_value['score'] = score
 
+                # for the actuation challenge
                 if assessment_name == "Lab1":
                     self.template_value['assessment_name'] = 'Actuation Challenge'
+
+                # for the perception challenge
                 elif assessment_name == "Lab2":
                     self.template_value['assessment_name'] = 'Perception Challenge'
+
+                # for the navigation challenge
                 elif assessment_name == "Lab3":
                     self.template_value['assessment_name'] = 'Navigation Challenge'
+
+                # for a simulation assessment that has a a nice name hopefully
                 else:                
                     self.template_value['assessment_name'] = assessment_name
 
@@ -242,14 +301,12 @@ class CloudsimAssessmentHandler(BaseHandler):
             except:
                 e = sys.exc_info()[0]
                 print(e)
-                alert = "An error occured while connecting to the simulator; " + str(e)
-                
+                alert = "An error occured while getting your score. Are you connected to a Simulation?" + str(e)
+                self.template_value['navbar'] = {}
+                self.template_value['alert'] = alert
+                self.render('/cloudlaunch.html')
 
-        self.template_value['navbar'] = {}
-        self.template_value['alert'] = alert
-        self.render('/cloudlaunch.html')
-
-
+        
 class CloudsimCredentialsEditHandler(BaseHandler):
     """Handles edits to student cloudsim credentials."""
 
@@ -295,11 +352,21 @@ class CloudsimTestLaunchHandler(BaseHandler):
         self.template_value['cloudsim_passwd'] = student.cloudsim_passwd
         self.template_value['cloudsim_simname'] = student.cloudsim_simname
 
-        print student.cloudsim_passwd
+        try:
+            cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd) 
+            task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
+            sim_data = cloudsim_api.get_constellation_data(student.cloudsim_simname)
+            status = "Getting Sim Data Here"
 
-        self.template_value['navbar'] = {}
-        self.template_value['status'] = status
-        self.render('cloudlaunch.html')
+        except:
+            e = sys.exc_info()[0]
+            print(e)
+            alert = "An error occured while connecting to the simulator. Are you sure your credentials are updated? " + str(e)
+            self.template_value['navbar'] = {}
+            self.template_value['alert'] = alert
+            self.template_value['status'] = "An Error Occured."
+            self.render('cloudlaunch.html')
+
 
     def post(self):
         """Handles POST requests."""
@@ -315,7 +382,7 @@ class CloudsimTestLaunchHandler(BaseHandler):
                 s = t.isoformat()
                 return s
         
-        status = "Connect to a Simulator to view tasks"
+        status = ""
         alert = ""
         task_list = ""
 
@@ -340,6 +407,7 @@ class CloudsimTestLaunchHandler(BaseHandler):
                 e = sys.exc_info()[0]
                 print(e)
                 alert = "An error occured while connecting to the simulator; " + str(e)
+                status = "An Error Occured."
 
         elif action == "createtask":
             try:
@@ -386,6 +454,7 @@ class CloudsimTestLaunchHandler(BaseHandler):
                 e = sys.exc_info()[0]
                 print(e)
                 alert = "An error occured while launching task; " + str(e)
+                status = "An Error Occured."
 
 
         self.template_value['navbar'] = {}
