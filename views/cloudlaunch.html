@@ -45,8 +45,14 @@ tr {text-align: left;}
         <h1>Status Check</h1>
         <p><div>
         <h2> Simulator Machine </h2>
-        {{ status }} 
-        {% if status == "An Error Occured." %} <a href="/student/home"> Update CloudSim credentials? </a><br/> {% endif %}
+        {% if status == "An Error Occured." %} <a href="/student/home"> Update CloudSim credentials? </a><br/> 
+        {% else %}
+        <table width = 60%>
+            <tr><th> Simulator State </th> <td>{{ status['sim_state'] }}</td></tr>
+            <tr><th> Provider </th> <td> {{ status['cloud_provider'] }} </td></tr>
+            <tr><th> Configuration </th> <td> {{ status['configuration'] }} </td></tr>
+        </table>
+        {% endif %}
         <h2> Tasks </h2>
         {% if task_list %} 
             <table width = 100%>
@@ -61,7 +67,7 @@ tr {text-align: left;}
             </table>
 
         {% else %}
-            No tasks here.
+            No tasks here. Try to Refresh Status.
         {% endif %}
    
         </div></p><br><hr><br>

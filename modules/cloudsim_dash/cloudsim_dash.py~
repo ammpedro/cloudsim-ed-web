@@ -24,7 +24,7 @@ import datetime
 import sys
 
 import cgi
-import urllib
+import urllib2
 import json 
 
 from common import safe_dom
@@ -186,46 +186,42 @@ class CloudsimAssessmentHandler(BaseHandler):
                 task_dict['vrc_num'] = 1
 
                 # create and start cloudsim task
-                cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd) 
+                cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd)
+                 
                 cloudsim_api.create_task(student.cloudsim_simname, task_dict)
                 print "Task Created"
                 task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
                 for task in task_list:
                     if (task['task_message'] == 'Ready to run') and (task['task_title'] == task_dict['task_title']):          
                         cloudsim_api.start_task(student.cloudsim_simname, task['task_id'])
-                        wait_for_task_state(cloudsim_api,
-                                            student.cloudsim_simname,
-                                            task['task_id'],
-                                            'running',
-                                            max_count,
-                                            sleep_secs)
-
+                print "finished waiting"
                 # start gzweb
                 cloudsim_api.start_gzweb(student.cloudsim_simname)
                 # start ipython notebook
                 cloudsim_api.start_notebook(student.cloudsim_simname)
                 simulator_data = cloudsim_api.get_constellation_data(student.cloudsim_simname)
                 gzweb_url = 'http://' + simulator_data['sim_public_ip'] + ':8080'
-
+                print ipynb_name
                 ipynb_id = ''
-                data = urllib2.urlopen(simulator_data["http://"+'sim_public_ip']+":8888/notebooks") 
+                ipynb_dashurl = "http://"+simulator_data['sim_public_ip']+":8888/notebooks"
+                print ipynb_dashurl
+                data = urllib2.urlopen(ipynb_dashurl) 
                 json_data=data.read()
                 list_o_dicts=json.loads(json_data)
                 for d in list_o_dicts:
-                    if d['name'] == ipynb_name: 
+                    if d['name'] == 'Alt_Control_Test': 
                         ipynb_id = d['notebook_id']
-
+                print ipynb_id
                 ipynb_url = 'http://' + simulator_data['sim_public_ip'] + ':8888/' + ipynb_id
 
                 splitscreen_url = "http://" + student.cloudsim_ip + "/cloudsim/inside/cgi-bin/splitsim?sim_ip=" + simulator_data['sim_public_ip'] +"&notebook_id=" + ipynb_id
-
-                goto_url = "/assessment?name=" + assessment_name
-                
-                self.template_value['challenge_name'] = assessment_name
+                print splitscreen_url
+                self.template_value['navbar'] = {}
+                self.template_value['challenge_name'] = ipynb_name
                 self.template_value['gzweb'] = gzweb_url
                 self.template_value['ipynb'] = ipynb_url
                 self.template_value['splitscn'] = splitscreen_url
-                self.render(challenge.html)    
+                self.render('challenge.html')    
 
             except:
                 e = sys.exc_info()[0]
@@ -233,6 +229,7 @@ class CloudsimAssessmentHandler(BaseHandler):
                 alert = "An error occured while starting the challenge. Are your CloudSim credentials working?" + str(e)
                 self.template_value['navbar'] = {}
                 self.template_value['alert'] = alert
+                self.template_value['status'] = "An Error Occured."
                 self.render('/cloudlaunch.html')
 
         elif action == "reset":
@@ -356,8 +353,10 @@ class CloudsimTestLaunchHandler(BaseHandler):
             cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd) 
             task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
             sim_data = cloudsim_api.get_constellation_data(student.cloudsim_simname)
-            status = "Getting Sim Data Here"
-
+            self.template_value['navbar'] = {}
+            self.template_value['alert'] = alert
+            self.template_value['status'] = sim_data
+            self.render('cloudlaunch.html')
         except:
             e = sys.exc_info()[0]
             print(e)
@@ -401,13 +400,14 @@ class CloudsimTestLaunchHandler(BaseHandler):
             try:
                 cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd) 
                 task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
-                status = ""
+                sim_data = cloudsim_api.get_constellation_data(student.cloudsim_simname)
+                status = sim_data
 
             except:
                 e = sys.exc_info()[0]
                 print(e)
                 alert = "An error occured while connecting to the simulator; " + str(e)
-                self.template_value['status'] = "An Error Occured."
+                status = "An Error Occured."
 
         elif action == "createtask":
             try:
@@ -446,15 +446,16 @@ class CloudsimTestLaunchHandler(BaseHandler):
                 task_dict['vrc_num'] = 1
 
                 cloudsim_api = CloudSimRestApi(student.cloudsim_ip, student.cloudsim_uname, student.cloudsim_passwd)
-                task_id = cloudsim_api.create_task(student.cloudsim_simname, task_dict)
+                cloudsim_api.create_task(student.cloudsim_simname, task_dict)
                 task_list = cloudsim_api.get_tasks(student.cloudsim_simname)
-                status = ""
+                sim_data = cloudsim_api.get_constellation_data(student.cloudsim_simname)
+                status = sim_data
                 alert = "Task Created"
             except:
                 e = sys.exc_info()[0]
                 print(e)
                 alert = "An error occured while launching task; " + str(e)
-                self.template_value['status'] = "An Error Occured."
+                status = "An Error Occured."
 
 
         self.template_value['navbar'] = {}

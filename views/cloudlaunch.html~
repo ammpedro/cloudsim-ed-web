@@ -45,10 +45,17 @@ tr {text-align: left;}
         <h1>Status Check</h1>
         <p><div>
         <h2> Simulator Machine </h2>
-        {{ status }} 
-        {% if status == "An Error Occured." %} <a href="/student/home"> Update CloudSim credentials? </a><br/> {% endif %}
-        <h2> Tasks </h2>
+        {% if status == "An Error Occured." %} <a href="/student/home"> Update CloudSim credentials? </a><br/> 
+        {% else %}
+        <table width = 60%>
+            <tr><th> Simulator State </th> <td>{{ status['sim_state'] }}</td></tr>
+            <tr><th> Provider </th> <td> {{ status['cloud_provider'] }} </td></tr>
+            <tr><th> Configuration </th> <td> {{ status['configuration'] }} </td></tr>
+        </table>
+        {% endif %}
+        
         {% if task_list %} 
+            <h2> Tasks </h2>
             <table width = 100%>
             {% for task in task_list %}
             <tr style="background-color:#D3D3D3">
@@ -58,14 +65,8 @@ tr {text-align: left;}
             <tr><th colspan=2> Message </th></tr>
             <tr><td colspan=2> {{ task['task_message'] }} </td>
             {% endfor %}
-            </table>
-
-        {% else %}
-            No tasks here.
-
         {% endif %}
-        <br><br>
-        <a class="gcb-button" href="/student/home"> Change Credentials? </a>
+   
         </div></p><br><hr><br>
 
         <h1>Simulator Constellation Details</h1>

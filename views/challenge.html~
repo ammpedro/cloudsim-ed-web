@@ -21,11 +21,11 @@ if (alertMsg != "") {
     <div class="gcb-col-9">
 
     <h1>{{ challenge_name }} is Ready to Run! </h1>
-    Choose a viewing mode below:
+    Choose a viewing mode below: </br>
     
     <a class="gcb-button" href = "{{ gzweb }}" target="_blank"> Open Simulation Window </a> &nbsp;&nbsp;&nbsp;
     <a class="gcb-button" href = "{{ ipynb }}" target="_blank"> Open IPython Notebook Window </a> &nbsp;&nbsp;&nbsp; 
-    <a class="gcb-button" href = "{{ splitscrn }}" target="_self"> Open Split Screen Mode </a> &nbsp;&nbsp;&nbsp;
+    <a class="gcb-button" href = "{{ splitscn }}" target="_self"> Open Split Screen Mode </a> &nbsp;&nbsp;&nbsp;
 
     </div>
 {% endblock %}
