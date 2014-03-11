@@ -74,7 +74,11 @@
     </tr>
     <tr>
       <th align="left">&nbsp;&nbsp;&nbsp;{{ gettext('Password') }}</th>
-      <td>{{ cloudsim_passwd }}</td>
+      <td> xxxxxx </td>
+    </tr>
+    <tr>
+      <th align="left">&nbsp;&nbsp;&nbsp;{{ gettext('Simulator Name') }}</th>
+      <td>{{ cloudsim_simname }}</td>
     </tr>
 
 </table>
