@@ -209,7 +209,7 @@ class CloudsimAssessmentHandler(BaseHandler):
                 json_data=data.read()
                 list_o_dicts=json.loads(json_data)
                 for d in list_o_dicts:
-                    if d['name'] == 'Alt_Control_Test': 
+                    if d['name'] == ipynb_name: 
                         ipynb_id = d['notebook_id']
                 print ipynb_id
                 ipynb_url = 'http://' + simulator_data['sim_public_ip'] + ':8888/' + ipynb_id

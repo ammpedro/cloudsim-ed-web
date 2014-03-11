@@ -53,9 +53,8 @@ tr {text-align: left;}
             <tr><th> Configuration </th> <td> {{ status['configuration'] }} </td></tr>
         </table>
         {% endif %}
-        
+        <h2> Tasks </h2>
         {% if task_list %} 
-            <h2> Tasks </h2>
             <table width = 100%>
             {% for task in task_list %}
             <tr style="background-color:#D3D3D3">
@@ -65,6 +64,10 @@ tr {text-align: left;}
             <tr><th colspan=2> Message </th></tr>
             <tr><td colspan=2> {{ task['task_message'] }} </td>
             {% endfor %}
+            </table>
+
+        {% else %}
+            No tasks here. Try to Refresh Status.
         {% endif %}
    
         </div></p><br><hr><br>
