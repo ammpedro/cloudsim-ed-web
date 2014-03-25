@@ -299,6 +299,7 @@ class CloudsimAssessmentHandler(BaseHandler):
                 e = sys.exc_info()[0]
                 print(e)
                 alert = "An error occured while getting your score. Are you connected to a Simulation?" + str(e)
+                self.template_value['status'] = "An Error Occured."
                 self.template_value['navbar'] = {}
                 self.template_value['alert'] = alert
                 self.render('/cloudlaunch.html')

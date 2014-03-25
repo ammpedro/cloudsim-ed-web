@@ -255,7 +255,7 @@ class CloudsimAssessmentHandler(BaseHandler):
                 answers = ''
                 
                 if assessment_name == "Lab1":
-                    score = int(float(task_msg['field.completion_score'])/2) * 100
+                    score = int(float(task_msg['field.completion_score'])/6) * 100
                 elif assessment_name == "Lab2":
                     score = int(task_msg['field.completion_score']) * 10
                 elif assessment_name == "Lab3":
